@@ -1,8 +1,31 @@
-import React from "react"
-import { Modal, StyleSheet, View, Text, FlatList } from "react-native"
+import React, {useState} from "react"
+import { 
+    Modal, 
+    StyleSheet,
+    View, 
+    Text, 
+    FlatList, 
+    Dimensions,
+    Pressable
+} from "react-native"
+import { NewItemFieldsModal } from "./New_Item_Fields_Modal"
 
+
+const SCREEN = Dimensions.get("window")
 
 export const NewItemModal = ({modalVisible, setMV}) => {
+    const [fieldsModal, setFM] = useState(false)
+    const [fields, setFields] = useState(null)
+
+    function newItem(category){
+        setFM(true)
+        for(element in DATA){
+            if(DATA[element].title === category){
+                console.log("We want new ", category)
+                setFields(DATA[element].fields)
+            }
+        }
+    }
 
     const renderItem = ({ item }) => (
         <Item title={item.title} />
@@ -10,9 +33,14 @@ export const NewItemModal = ({modalVisible, setMV}) => {
 
 
       const Item = ({ title }) => (
-        <View style={styles.item}>
-          <Text style={styles.title}>{title}</Text>
-        </View>
+        <Pressable 
+            onPress={()=>newItem(title)}
+            style={({pressed})=>[styles.item_box, {backgroundColor: pressed
+                ?"grey"
+                :"white"
+            }]}>
+          <Text style={styles.item_text}>{title}</Text>
+        </Pressable>
       );
 
 
@@ -31,6 +59,7 @@ export const NewItemModal = ({modalVisible, setMV}) => {
                         renderItem={renderItem}
                         keyExtractor={item => item.title}
                     />
+                    <NewItemFieldsModal title={"TITULO QQR"} setFM={setFM} open={fieldsModal} fields={fields}/>
                 </View>
         </Modal>
     )
@@ -47,15 +76,32 @@ const styles = StyleSheet.create({
         top: "5%",
         fontWeight:"700",
         fontFamily:"Roboto"
+    },
+    item_box:{ 
+        marginBottom: "2%", 
+        height: SCREEN.height*0.07,  
+        justifyContent:"center", 
+        width:SCREEN.width*0.95,
+        borderBottomColor: "black",
+        borderBottomWidth: 0.8,
+        borderBottomColor: "grey"
+    },
+    item_text: {
+        fontSize:16,
+        marginLeft: SCREEN.width*0.05,
+        fontFamily: "Roboto",
+        fontWeight: "600"
     }
+
 })
 
 
-
+//Passar esta data para dentro de um ficheiro a parte
 const DATA = [
     {
-    
       title: 'Books',
+      fields: [
+      ]
     },
     {
     
@@ -64,6 +110,12 @@ const DATA = [
     {
      
       title: 'Cars',
+      fields: [
+          {title: "Brand", type: "String"},
+          {title: "Model", type: "String"},
+          {title: "Year", type: "Date"},
+          {title: "Version", type: "String"},
+      ]
     },
     {
      
@@ -78,3 +130,7 @@ const DATA = [
         title: 'Jobs',
     },
   ];
+
+  function createNewCarItem(){
+      console.log("Estamos a tentar criar novo Item que 'e carro")
+  }
