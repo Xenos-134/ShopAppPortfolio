@@ -111,6 +111,7 @@ const DATA = [
      
       title: 'Cars',
       fields: [
+          {title: "Photos", type:"Image"},
           {title: "Brand", type: "String"},
           {title: "Model", type: "String"},
           {title: "Year", type: "Date"},
