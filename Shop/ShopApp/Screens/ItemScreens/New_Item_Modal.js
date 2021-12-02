@@ -112,10 +112,11 @@ const DATA = [
       title: 'Cars',
       fields: [
           {title: "Photos", type:"Image"},
-          {title: "Brand", type: "String"},
-          {title: "Model", type: "String"},
+          {title: "Description", type:"String"},
+          {title: "Brand", type: "Selector"},
+          {title: "Model", type: "Selector"},
           {title: "Year", type: "Date"},
-          {title: "Version", type: "String"},
+          {title: "Version", type: "Number"},
       ]
     },
     {
