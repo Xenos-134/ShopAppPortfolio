@@ -10,6 +10,7 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
     const [selectorTitle, setItem] = useState(null) // Title of the selector
     const [selector, setSelector] = useState(null) //item escolhido pelo selector
     const [nif, setNIF] = useState(null) //Set New Item Fields
+    const [txt, setText] = useState("") //TextInputHolder Used For Strings
 
     useEffect(()=>{
         if(fields && fields.length){
@@ -29,6 +30,8 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
             <Field item={item}/>
         )
     }
+
+
 
 
     //Function that get list of  possibilities for certain type of fields
@@ -61,7 +64,12 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
             case "String":
                 return(
                     <View style={styles.fields}>
-                        <TextInput placeholder={item.title} style={styles.string_input}/>
+                        <TextInput 
+                            key={item}
+                            onEndEditing={(e) => {addSelectedTextField(item.title, e.nativeEvent.text)}} //nao podemos usar onChangeText pois isso faz reload de todo flatList
+                            placeholder={item.title} 
+                            style={styles.string_input}
+                        />
                     </View>  
                 )
             case "Number":
@@ -92,7 +100,16 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
                 nif[elm].value = selector
             }
         }
-        //console.log(">>>>Nosso Nif", nif)
+    }
+
+    //Function that adds text of the selected field
+    async function addSelectedTextField(itemT, text){
+        for(elm in nif){
+            if(nif[elm].title === itemT){
+                nif[elm].value = text
+            }
+        }
+        console.log("Nossa nofa nif", nif)
     }
 
 

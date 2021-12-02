@@ -112,7 +112,6 @@ const DATA = [
       title: 'Cars',
       fields: [
           {title: "Photos", type:"Image"},
-          {title: "Description", type:"String"},
           {title: "Brand", type: "Selector", list: [
               "AlfaRomeo",
               "BMW",
@@ -121,6 +120,7 @@ const DATA = [
               "Toyota"
           ]},
           {title: "Model", type: "Selector"},
+          {title: "Description", type:"String"},
           {title: "Year", type: "Date"},
           {title: "Version", type: "Number"},
       ]
