@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Modal, View, Text, FlatList, Dimensions, StyleSheet, TextInput, Button, Pressable } from "react-native";
+import { 
+    Modal, 
+    View, 
+    Text, 
+    FlatList, 
+    Dimensions, 
+    StyleSheet, 
+    TextInput, 
+    Button, 
+    Pressable, 
+    Alert
+} from "react-native";
 
 const SCREEN = Dimensions.get("window")
 
@@ -11,6 +22,7 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
     const [selector, setSelector] = useState(null) //item escolhido pelo selector
     const [nif, setNIF] = useState(null) //Set New Item Fields
     const [txt, setText] = useState("") //TextInputHolder Used For Strings
+    const [flag, setF] = useState(true)
 
     useEffect(()=>{
         if(fields && fields.length){
@@ -30,8 +42,6 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
             <Field item={item}/>
         )
     }
-
-
 
 
     //Function that get list of  possibilities for certain type of fields
@@ -58,8 +68,6 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
         console.log("Lista", list)
         return list
     }
-
-    const [flag, setF] = useState(true)
     
     const Field = ({item}) => {
         var sel;
@@ -109,9 +117,11 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
                 )
             default:
                 return(
-                    <View style={styles.fields}>
-                        <Text>{item.title}</Text>
-                    </View>  
+                    <View style={{alignItems:"center"}}>
+                        <View style={[styles.fields]}>
+                            <Text>{item.title}</Text>
+                        </View>  
+                    </View>
                 )
         }
     }
@@ -123,7 +133,6 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
                 nif[elm].value = selector
                 setNIF(nif)
                 setF(true)
-                console.log(">>>>>FIZEMOS UPDATE")
             }
         }
         
@@ -138,6 +147,22 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
         }
     }
 
+
+    async  function submitHandler(){
+        presubmitValidation(nif)
+        //console.log("LISTA QUE QUEREMOS SUBMETER\n", nif)
+    }
+
+    async function presubmitValidation(new_item){//Temporary function that verifies fields before submiting
+        console.log()
+        for await (field of new_item){
+            if(!field.value){
+                Alert.alert(`${field.title} isnt filled`, "Please fill ALL fields before submiting", [{text: "Ok", onPress:()=>console.log("-")}])
+                return false
+            }
+        }
+        return true
+    }
 
     //render of field for some selector of new Item
     const renderFieldListItem = ({item}) => {
@@ -155,7 +180,6 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
             </Pressable>
         )
     }
-
 
     if(!isLoaded)return(
         <Modal
@@ -184,6 +208,12 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
                 style={styles.newItemFields}
                 keyExtractor={item=>item.title}
                 renderItem={renderFields}
+                ListFooterComponent={
+                    <Button
+                        title="Submit"
+                        onPress={submitHandler}
+                    />
+                }
             />
             <Modal
                 animationType="slide"
@@ -229,7 +259,7 @@ const styles = StyleSheet.create({
 const CarModels =  {
     AlfaRomeo: ["A_R Brand"],
     BMW: ["e36"],
-    Seat: ["A_R Brand"],
+    Seat: ["Seat Brand"],
     Audi: ["A5", "A3", "Qautro"],
     Toyota: ["Toyota Brand"],
 }
