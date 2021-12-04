@@ -59,30 +59,53 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
         return list
     }
 
+    const [flag, setF] = useState(true)
+    
     const Field = ({item}) => {
+        var sel;
+        if(!flag){
+            return(
+                <View>
+                    <Text>UPDATING</Text>
+                </View>
+            )
+        }
+
+        const x = nif.find(elm => elm.title === item.title)
+        sel = x.value
+
         switch(item.type){
             case "String":
                 return(
-                    <View style={styles.fields}>
+                    <View style={{alignItems: "center"}}>
                         <TextInput 
                             key={item}
                             onEndEditing={(e) => {addSelectedTextField(item.title, e.nativeEvent.text)}} //nao podemos usar onChangeText pois isso faz reload de todo flatList
-                            placeholder={item.title} 
-                            style={styles.string_input}
+                            placeholder={item.title}
+                            style={styles.fields} 
                         />
                     </View>  
                 )
             case "Number":
                     return(
-                        <View style={styles.fields}>
-                            <TextInput placeholder={item.title} keyboardType="phone-pad" style={styles.string_input}/>
+                        <View style={{alignItems: "center"}}>
+                            <TextInput 
+                                onEndEditing={(e) => {addSelectedTextField(item.title, e.nativeEvent.text)}} //nao podemos usar onChangeText pois isso faz reload de todo flatList
+                                placeholder={item.title} 
+                                keyboardType="phone-pad" 
+                                style={styles.fields} 
+                            />
                         </View>  
                     )
             case "Selector":
                 return(
-                    <Pressable onPress={()=>getSelectorElements(item)} style={styles.fields}>
-                        <Text>{item.title}</Text>
-                    </Pressable>  
+                    <View 
+                        key={item.title}
+                        style={{alignItems: "center"}}>
+                        <Pressable onPress={()=>getSelectorElements(item)} style={styles.fields}>
+                            <Text>{sel?sel:item.title}</Text>
+                        </Pressable>  
+                    </View>
                 )
             default:
                 return(
@@ -98,8 +121,12 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
         for(elm in nif){
             if(nif[elm].title === selectorTitle){
                 nif[elm].value = selector
+                setNIF(nif)
+                setF(true)
+                console.log(">>>>>FIZEMOS UPDATE")
             }
         }
+        
     }
 
     //Function that adds text of the selected field
@@ -109,15 +136,21 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
                 nif[elm].value = text
             }
         }
-        console.log("Nossa nofa nif", nif)
     }
 
 
+    //render of field for some selector of new Item
     const renderFieldListItem = ({item}) => {
         return(
             <Pressable
-                onPress={()=>{setMF(false); setSelector(item)}} 
-                style={{width: SCREEN.width, height: SCREEN.height*0.07, marginBottom: 2, alignItems:"center"}}>
+                onPress={()=>{setMF(false); setSelector(item); setF(false)}} 
+                style={{width: SCREEN.width, 
+                            height: SCREEN.height*0.07, 
+                            marginBottom: 2, 
+                            alignItems:"center", 
+                            borderBottomWidth: 1,
+                            borderBottomColor: 'black'
+                            }}>
                 <Text>{item}</Text> 
             </Pressable>
         )
@@ -146,8 +179,9 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
         >
             <FlatList
                 style={{top:"12%"}}
-                data={fields}
-                style={{position:"absolute", width:SCREEN.width, height: SCREEN.height, backgroundColor:"white"}}
+                //data={fields}
+                data={nif}
+                style={styles.newItemFields}
                 keyExtractor={item=>item.title}
                 renderItem={renderFields}
             />
@@ -171,17 +205,24 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
 
 const styles = StyleSheet.create({
     fields: {
-        backgroundColor: "white", 
-        alignItems:"center", 
-        justifyContent:"center",
-        height: SCREEN.height*0.08,
-        alignItems: "flex-start",
-        paddingLeft: SCREEN.width*0.1,
-        
+        marginBottom: "2%", 
+        height: SCREEN.height*0.07,  
+        justifyContent:"center", 
+        width:SCREEN.width*0.95,
+        borderBottomColor: "black",
+        borderBottomWidth: 0.8,
+        borderBottomColor: "grey",
     },
     string_input:{
         borderBottomWidth: 1, 
-        width: SCREEN.width*0.8
+        width: SCREEN.width*0.95
+    },
+    newItemFields:{
+        position:"absolute", 
+        width:SCREEN.width, 
+        height: SCREEN.height, 
+        backgroundColor:"white",
+
     }
 })
 
