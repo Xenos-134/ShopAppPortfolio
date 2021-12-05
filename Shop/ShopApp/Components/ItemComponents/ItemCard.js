@@ -8,7 +8,7 @@ export const ItemCard = ({itemData}) => {
     return(
         <View style={styles.product}>
             <Image 
-                source={{uri: `https://picsum.photos/500/500?813?a`}}
+                source={{uri: `https://picsum.photos/500/500?${itemData.title}`}}
                 style={styles.product_image}
                 resizeMethod="auto"
             />

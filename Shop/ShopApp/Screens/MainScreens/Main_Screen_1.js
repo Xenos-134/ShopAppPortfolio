@@ -11,6 +11,7 @@ export const Main_Screen_1 = ({children}) => {
 
 const styles = StyleSheet.create({
     screen:{
+        top: 35, //use Some shit to make margn on top
         alignItems: "center",
         justifyContent:"center",
         flex:1,
