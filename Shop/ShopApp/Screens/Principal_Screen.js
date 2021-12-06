@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, Dimensions, StyleSheet, Image, Button, Modal } from "react-native";
 import { AntDesign } from '@expo/vector-icons'; 
 
@@ -10,14 +10,24 @@ import { ItemCard } from "../Components/ItemComponents/ItemCard";
 import { NewItemModal } from "./ItemScreens/New_Item_Modal";
 import { FlatList } from "react-native-gesture-handler";
 
+
+import { OpenContext } from "../Context/AuxContext"; //My Context
+
+
 const SCREEN = Dimensions.get("window")
 
 const ItemListRow = ({item}) => {
-    console.log("Item Pair ", item)
+    if(item.complete){
+        return(
+            <View style={{flexDirection: "row"}}>
+                <ItemCard itemData={{title: item.fe.title, price: item.fe.price}} />
+                <ItemCard itemData={{title: `${item.se.title}`, price: item.se.price}} />
+            </View>
+        )
+    }
     return(
         <View style={{flexDirection: "row"}}>
-            <ItemCard itemData={{title: item.fe.title, price: item.fe.price}} />
-            <ItemCard itemData={{title: `${item.se.title}`, price: item.se.price}} />
+                <ItemCard itemData={{title: item.fe.title, price: item.fe.price}} />
         </View>
     )
 }
@@ -27,14 +37,18 @@ export const PrincipalScreen = ({navigation}) => {
     const [modalVisible, setMV] = useState(false)
     const [pairs, setPairs] = useState() //list for pairs for pairs of the elements 
     const [isLoaded, setLoaded] = useState(false)
+    const oc = useContext(OpenContext)
 
     useEffect(()=>{
         arrangePairsHandler(ItemList)
-       
+        console.log(oc)
     },[])
 
     useEffect(()=>{
+        //console.log("SUCCESSO", oc)
+    },[oc])
 
+    useEffect(()=>{
         setLoaded(true)
     },[pairs])
 
@@ -43,16 +57,12 @@ export const PrincipalScreen = ({navigation}) => {
         var pairs_list = [];
         var i = 0;
             while(i < itemList.length){
-                const pair = {fe: itemList[i], se: itemList[i+1], key: i}
+                const pair = {fe: itemList[i], se: itemList[i+1], key: i, complete: itemList[i+1]?true:false }
                 pairs_list.push(pair)
                 i=i+2;
 
             }
-
-
-        setPairs(pairs_list)
-
-        
+        setPairs(pairs_list)        
     }   
 
     return(
@@ -66,10 +76,11 @@ export const PrincipalScreen = ({navigation}) => {
                 title="New Item"
                 onPress={()=>setMV(!modalVisible)}
             />
-            <NewItemModal modalVisible={modalVisible} setMV={setMV}/>
+            <NewItemModal modalVisible={oc.open} setMV={oc.of}/>
         </Main_Screen_1>
     )
 }
+
 
 
 const styles = StyleSheet.create({
@@ -126,4 +137,5 @@ const ItemList = [
     {title:"8th Item", price:75},
     {title:"9th Item", price:26},
     {title:"10th Item", price:17},
+    
 ]

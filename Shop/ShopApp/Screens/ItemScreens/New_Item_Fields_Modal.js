@@ -12,7 +12,11 @@ import {
     Alert
 } from "react-native";
 
+import {COLORS} from "../../Components/Colors/colors"
+
 const SCREEN = Dimensions.get("window")
+
+
 
 export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
     const [isLoaded, setLoaded] = useState(false)
@@ -167,17 +171,13 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
     //render of field for some selector of new Item
     const renderFieldListItem = ({item}) => {
         return(
-            <Pressable
-                onPress={()=>{setMF(false); setSelector(item); setF(false)}} 
-                style={{width: SCREEN.width, 
-                            height: SCREEN.height*0.07, 
-                            marginBottom: 2, 
-                            alignItems:"center", 
-                            borderBottomWidth: 1,
-                            borderBottomColor: 'black'
-                            }}>
-                <Text>{item}</Text> 
-            </Pressable>
+            <View style={{alignItems:"center"}}>
+                <Pressable
+                    onPress={()=>{setMF(false); setSelector(item); setF(false)}} 
+                    style={[styles.fields]}>
+                        <Text>{item}</Text> 
+                </Pressable>
+            </View>
         )
     }
 
@@ -208,13 +208,22 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
                 style={styles.newItemFields}
                 keyExtractor={item=>item.title}
                 renderItem={renderFields}
-                ListFooterComponent={
-                    <Button
-                        title="Submit"
-                        onPress={submitHandler}
-                    />
-                }
             />
+            <View style={{alignItems:"center", position:"absolute", width:SCREEN.width, top: SCREEN.height*0.87}}>
+                        <Pressable
+                            onPress={submitHandler}
+                        style={{
+                            backgroundColor:COLORS.green,
+                            width: SCREEN.width*0.95,
+                            height: SCREEN.height*0.07,
+                            borderRadius: SCREEN.height*0.035,
+                            alignItems:"center",
+                            justifyContent:"center"
+                        }}
+                        >
+                            <Text style={{color:"white"}}>Submit</Text>
+                        </Pressable>
+            </View>
             <Modal
                 animationType="slide"
                 visible={modalFlag}
