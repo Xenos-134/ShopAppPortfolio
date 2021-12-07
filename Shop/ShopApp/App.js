@@ -50,7 +50,7 @@ export default function App() {
       <NavigationContainer >
         <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} {...props} />}>
           <Tab.Screen name="Home" component={PrincipalScreen} />
-          <Tab.Screen name="NewItem" component={Nothing}/>
+          <Tab.Screen name="+" component={Nothing}/>
           <Tab.Screen name="Chat" component={ChatScreen}/>
           <Tab.Screen name="Settings" component={SettingsScreen} />
         </Tab.Navigator>
@@ -112,6 +112,7 @@ function MyTabBar({ state, descriptors, navigation, of }) {
           });
         };
 
+        
         return (
           <TouchableOpacity
             key={route.key}
