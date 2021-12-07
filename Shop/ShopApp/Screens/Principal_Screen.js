@@ -19,7 +19,7 @@ const SCREEN = Dimensions.get("window")
 const ItemListRow = ({item}) => {
     if(item.complete){
         return(
-            <View style={{flexDirection: "row"}}>
+            <View style={{flexDirection: "row", width: SCREEN.width, justifyContent:"center"}}>
                 <ItemCard itemData={{title: item.fe.title, price: item.fe.price}} />
                 <ItemCard itemData={{title: `${item.se.title}`, price: item.se.price}} />
             </View>
@@ -70,6 +70,7 @@ export const PrincipalScreen = ({navigation}) => {
                 data={pairs}
                 keyExtractor={item => item.key}
                 renderItem={ItemListRow}
+                ListFooterComponent={()=><View style={{height: SCREEN.height*0.1}}/>}
             />
             <NewItemModal modalVisible={oc.open} setMV={oc.of}/>
         </Main_Screen_1>

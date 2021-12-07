@@ -4,7 +4,7 @@
 
 import React, {useState, useEffect} from "react";
 import { Main_Screen_1 } from "../MainScreens/Main_Screen_1";
-import {View, Text, Button , Image, FlatList, Dimensions, TextInput, Keyboard} from "react-native"
+import {View, Text, Button , Image, FlatList, Dimensions, TextInput, Keyboard, Pressable} from "react-native"
 import * as ImagePicker from 'expo-image-picker';
 
 import {COLORS} from "../../Components/Colors/colors"
@@ -17,6 +17,7 @@ const SCREEN = Dimensions.get("screen")
 export const ChatScreen = () => {
     const myId = "12"
     const auxContext = useContext(OpenContext)
+    const [message, setMessage] = useState("")
 
     useEffect(()=>{
         const keybardDidShowListener = Keyboard.addListener("keyboardDidShow",()=> auxContext.sok(true))
@@ -28,6 +29,11 @@ export const ChatScreen = () => {
           
         })
     },[])
+
+    function sendMessage({text}){
+        console.log(">>",message)
+        setMessage("")
+    }
 
 
     function renderMessage({item}){
@@ -81,11 +87,41 @@ export const ChatScreen = () => {
                 data={messages}
                 renderItem={renderMessage}
                 keyExtractor={item=>item.id}
+                initialScrollIndex={messages.length - 1}
+                ListFooterComponent={()=><View style={{height: SCREEN.height*0.2}}/>}
             />
             <TextInput
-                style={{width:SCREEN.width*0.93, height: SCREEN.height*0.07, position: "absolute", bottom: 50, backgroundColor:"red", borderRadius: SCREEN.height*0.035, paddingHorizontal: SCREEN.width*0.05}}
-                value="TEST TEXT"
+                style={{width:SCREEN.width*0.8, 
+                        height: SCREEN.height*0.07,
+                        left:SCREEN.width*0.02,  
+                        position: "absolute", 
+                        bottom: 50, 
+                        backgroundColor:"#ccffcc", 
+                        borderRadius: SCREEN.height*0.035, 
+                        paddingHorizontal: SCREEN.width*0.05,
+                        borderWidth: 1,
+                        borderColor: "#009933"
+                    }}
+                onChangeText={(text)=>setMessage(text)}
+                placeholder="Your Message"
+                value={message}
             />
+            <Pressable 
+                onPress={sendMessage}
+                style={{
+                    height: SCREEN.height*0.07,
+                    width:SCREEN.width*0.12,
+                    borderRadius: SCREEN.height*0.035,
+                    backgroundColor:"#009933", 
+                    position: "absolute", 
+                    bottom: 50, 
+                    right: 10,
+                    alignItems:"center",
+                    justifyContent:"center",
+                    elevation:5
+                    }}>
+                <Text>+</Text>
+            </Pressable>
         </Main_Screen_1>
     )
 }

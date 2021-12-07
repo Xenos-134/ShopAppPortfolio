@@ -11,6 +11,10 @@ export const Notifications = ({navigation}) => {
                     title="Chat"
                     onPress={()=>navigation.navigate("ChatScreen")}
                 />
+                <Button
+                    title="Chat"
+                    onPress={()=>navigation.navigate("ChatScreen")}
+                />
             </Text>
         </Main_Screen_1>
     )

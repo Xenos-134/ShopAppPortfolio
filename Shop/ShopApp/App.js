@@ -1,9 +1,15 @@
 //---------------------------------------------------------
 //  React Native Components
 //---------------------------------------------------------
-import { StatusBar } from 'expo-status-bar';
+
 import React, { createContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Keyboard } from 'react-native';
+import Constants from 'expo-constants';
+import { StyleSheet, 
+  Text, 
+  View, 
+  TouchableOpacity, 
+  Dimensions,
+} from 'react-native';
 
 
 //---------------------------------------------------------
@@ -24,11 +30,16 @@ import { Notifications } from './Screens/UserScreens/Notificatio_Screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'; // swipable navigation
 
+//Stack navigation
 const Stack = createNativeStackNavigator()
 
 //TAB NAVIGATION
 const Tab = createBottomTabNavigator()
+
+//Swipable tab navigation
+const STab = createMaterialTopTabNavigator()
 
 
 //Context
@@ -60,7 +71,7 @@ export default function App() {
         <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
           <Tab.Screen name="Home" component={PrincipalScreen} />
           <Tab.Screen name="+" component={Nothing}/>
-          <Tab.Screen name="Chat" component={Chat}/>
+          <Tab.Screen name="Chat" component={SChat}/>
           <Tab.Screen name="Settings" component={SettingsScreen} />
         </Tab.Navigator>
       </NavigationContainer>
@@ -69,13 +80,13 @@ export default function App() {
 }
 
 
-function Chat(){
+//Swipable tab navigator for notifications and messages
+function SChat(){
   return(
-    <Stack.Navigator>
-      <Stack.Screen name="Notification" component={Notifications}/>
-      <Stack.Screen name="ChatScreen" component={ChatScreen}/>
+    <STab.Navigator screenOptions={{tabBarStyle: { backgroundColor: 'powderblue', top: Constants.statusBarHeight }}}>
+      <STab.Screen  name="ChatScreen" component={ChatScreen}/>
       <Stack.Screen name="Login" component={Login}/>
-    </Stack.Navigator>
+    </STab.Navigator>
   )
 }
 
