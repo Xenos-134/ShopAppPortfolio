@@ -41,7 +41,6 @@ export const PrincipalScreen = ({navigation}) => {
 
     useEffect(()=>{
         arrangePairsHandler(ItemList)
-        console.log(oc)
     },[])
 
     useEffect(()=>{
@@ -71,10 +70,6 @@ export const PrincipalScreen = ({navigation}) => {
                 data={pairs}
                 keyExtractor={item => item.key}
                 renderItem={ItemListRow}
-            />
-            <Button
-                title="New Item"
-                onPress={()=>setMV(!modalVisible)}
             />
             <NewItemModal modalVisible={oc.open} setMV={oc.of}/>
         </Main_Screen_1>

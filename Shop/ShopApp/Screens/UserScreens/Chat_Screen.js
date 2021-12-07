@@ -4,16 +4,30 @@
 
 import React, {useState, useEffect} from "react";
 import { Main_Screen_1 } from "../MainScreens/Main_Screen_1";
-import {View, Text, Button , Image, FlatList, Dimensions} from "react-native"
+import {View, Text, Button , Image, FlatList, Dimensions, TextInput, Keyboard} from "react-native"
 import * as ImagePicker from 'expo-image-picker';
 
 import {COLORS} from "../../Components/Colors/colors"
+import { useContext } from "react/cjs/react.development";
+import { OpenContext } from "../../Context/AuxContext";
 
 const SCREEN = Dimensions.get("screen")
 
 
 export const ChatScreen = () => {
     const myId = "12"
+    const auxContext = useContext(OpenContext)
+
+    useEffect(()=>{
+        const keybardDidShowListener = Keyboard.addListener("keyboardDidShow",()=> auxContext.sok(true))
+        const keybardDidHideListener = Keyboard.addListener("keyboardDidHide",()=> auxContext.sok(false))
+     
+        return(()=>{
+            keybardDidHideListener.remove()
+            keybardDidShowListener.remove()
+          
+        })
+    },[])
 
 
     function renderMessage({item}){
@@ -68,6 +82,10 @@ export const ChatScreen = () => {
                 renderItem={renderMessage}
                 keyExtractor={item=>item.id}
             />
+            <TextInput
+                style={{width:SCREEN.width*0.93, height: SCREEN.height*0.07, position: "absolute", bottom: 50, backgroundColor:"red", borderRadius: SCREEN.height*0.035, paddingHorizontal: SCREEN.width*0.05}}
+                value="TEST TEXT"
+            />
         </Main_Screen_1>
     )
 }
@@ -81,6 +99,8 @@ const messages = [
     {text: "Also Good. Im contacting you to because of your last publication. Is it till avaliable", senderName: "John", senderId: "12", id: "5"},
     {text: "Yes of Course. Is the price same?", senderName: "John", senderId: "123", id: "6"},
     {text: "If yes whe are u free?", senderName: "John", senderId: "123", id: "7"},
+    {text: "When?", senderName: "John", senderId: "12", id: "8"},
+    {text: "Final Message", senderName: "John", senderId: "12", id: "9"},
 ]
 
 

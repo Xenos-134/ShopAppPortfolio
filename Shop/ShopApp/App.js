@@ -2,8 +2,8 @@
 //  React Native Components
 //---------------------------------------------------------
 import { StatusBar } from 'expo-status-bar';
-import React, { createContext, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import React, { createContext, useEffect, useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Keyboard } from 'react-native';
 
 
 //---------------------------------------------------------
@@ -15,6 +15,7 @@ import { SignUp } from './Screens/SignUp_Screen';
 import { Login } from './Screens/Auth_Screens/Login_Screen';
 import { PrincipalScreen } from './Screens/Principal_Screen';
 import { NewItemScreen } from './Screens/ItemScreens/NewItem_Screen';
+import { Notifications } from './Screens/UserScreens/Notificatio_Screen';
 
 
 //---------------------------------------------------------
@@ -25,7 +26,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createNativeStackNavigator()
-import { CardStyleInterpolators } from '@react-navigation/stack';
 
 //TAB NAVIGATION
 const Tab = createBottomTabNavigator()
@@ -40,24 +40,45 @@ const SCREEN = Dimensions.get("window")
 
 export default function App() {
   const [open, setOpen] = useState(false)
-  
+  const [ok, setOk] = useState(false) //opened Keyboard
+
+
+
   function of(){ //openfunction
+    console.log("ESTAMOS A ABRIR")
     setOpen(!open)    
   }
 
+  function sok(flag){ //Function to hide tab navigator
+    setOk(flag)
+    //console.log("Tentamos Abrir chat - ", ok, "/", flag)
+  }
+
   return (
-    <OpenContext.Provider value={{of, open}}>
+    <OpenContext.Provider value={{of, open, ok, sok}}>
       <NavigationContainer >
-        <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} {...props} />}>
+        <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
           <Tab.Screen name="Home" component={PrincipalScreen} />
           <Tab.Screen name="+" component={Nothing}/>
-          <Tab.Screen name="Chat" component={ChatScreen}/>
+          <Tab.Screen name="Chat" component={Chat}/>
           <Tab.Screen name="Settings" component={SettingsScreen} />
         </Tab.Navigator>
       </NavigationContainer>
     </OpenContext.Provider>
   );
 }
+
+
+function Chat(){
+  return(
+    <Stack.Navigator>
+      <Stack.Screen name="Notification" component={Notifications}/>
+      <Stack.Screen name="ChatScreen" component={ChatScreen}/>
+      <Stack.Screen name="Login" component={Login}/>
+    </Stack.Navigator>
+  )
+}
+
 
 function HomeScreen() {
   return (
@@ -79,9 +100,11 @@ function Nothing() {
     return(null)
 }
 
-function MyTabBar({ state, descriptors, navigation, of }) {
+function MyTabBar({ state, descriptors, navigation, of, ok }) {
   return (
-    <View style={{ flexDirection: 'row', height:SCREEN.height*0.075, alignItems:"center", justifyContent:"center"}}>
+    <View style={{ flexDirection: 'row', height:ok?0:SCREEN.height*0.075, alignItems:"center", justifyContent:"center", elevation: 10}}>
+
+
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
@@ -94,7 +117,7 @@ function MyTabBar({ state, descriptors, navigation, of }) {
         const isFocused = state.index === index;
 
         const onPress = () => {
-          if(label==="NewItem") return of()
+          if(label==="+") return of()
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
@@ -130,6 +153,7 @@ function MyTabBar({ state, descriptors, navigation, of }) {
           </TouchableOpacity>
         );
       })}
+
     </View>
   );
 }
