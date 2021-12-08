@@ -16,18 +16,20 @@ import { OpenContext } from "../Context/AuxContext"; //My Context
 
 const SCREEN = Dimensions.get("window")
 
-const ItemListRow = ({item}) => {
+//test is temp arg func to test some shit
+const ItemListRow = ({item, navigate}) => {
+
     if(item.complete){
         return(
             <View style={{flexDirection: "row", width: SCREEN.width, justifyContent:"center"}}>
-                <ItemCard itemData={{title: item.fe.title, price: item.fe.price}} />
-                <ItemCard itemData={{title: `${item.se.title}`, price: item.se.price}} />
+                <ItemCard itemData={{title: item.fe.title, price: item.fe.price}} navigate={navigate}/>
+                <ItemCard itemData={{title: `${item.se.title}`, price: item.se.price}} navigate={navigate}/>
             </View>
         )
     }
     return(
         <View style={{flexDirection: "row"}}>
-                <ItemCard itemData={{title: item.fe.title, price: item.fe.price}} />
+                <ItemCard itemData={{title: item.fe.title, price: item.fe.price}}/>
         </View>
     )
 }
@@ -44,12 +46,14 @@ export const PrincipalScreen = ({navigation}) => {
     },[])
 
     useEffect(()=>{
-        //console.log("SUCCESSO", oc)
-    },[oc])
-
-    useEffect(()=>{
         setLoaded(true)
     },[pairs])
+
+    //Aux function that i pass inside other component no navigate to item screen
+    function navigate(item){
+        //console.log("Success", item)
+        navigation.navigate("ItemPage", {item})
+    }
 
     //Function That aranges my list of items into pairs cuz of 2 items per row
     async function arrangePairsHandler(itemList){
@@ -69,7 +73,7 @@ export const PrincipalScreen = ({navigation}) => {
             <FlatList
                 data={pairs}
                 keyExtractor={item => item.key}
-                renderItem={ItemListRow}
+                renderItem={({item})=>ItemListRow({item, navigate})}
                 ListFooterComponent={()=><View style={{height: SCREEN.height*0.1}}/>}
             />
             <NewItemModal modalVisible={oc.open} setMV={oc.of}/>

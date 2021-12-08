@@ -1,12 +1,12 @@
 import React from "react";
-import { View, Image, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Image, Text, StyleSheet, Dimensions, Pressable } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 const SCREEN = Dimensions.get("window")
 
 
-export const ItemCard = ({itemData}) => {
+export const ItemCard = ({itemData, navigate}) => {
     return(
-        <View style={styles.product}>
+        <Pressable style={styles.product} onPress={()=>navigate(itemData)}>
             <Image 
                 source={{uri: `https://picsum.photos/500/500?${itemData.title}`}}
                 style={styles.product_image}
@@ -21,7 +21,7 @@ export const ItemCard = ({itemData}) => {
             <View style={styles.product_title_box}>
                 <Text style={styles.product_title_text}>{itemData.title}</Text>
             </View>
-        </View>
+        </Pressable>
     )
 }
 

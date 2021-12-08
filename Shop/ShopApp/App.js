@@ -45,6 +45,7 @@ const STab = createMaterialTopTabNavigator()
 //Context
 import { OpenContext } from './Context/AuxContext';
 import { ChatScreen } from './Screens/UserScreens/Chat_Screen';
+import { ItemPage } from './Screens/ItemScreens/View_Item_Screen';
 const SCREEN = Dimensions.get("window")
 
 
@@ -69,7 +70,7 @@ export default function App() {
     <OpenContext.Provider value={{of, open, ok, sok}}>
       <NavigationContainer >
         <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
-          <Tab.Screen name="Home" component={PrincipalScreen} />
+          <Tab.Screen name="Home" component={StackScreen} />
           <Tab.Screen name="+" component={Nothing}/>
           <Tab.Screen name="Chat" component={SChat}/>
           <Tab.Screen name="Settings" component={SettingsScreen} />
@@ -81,9 +82,10 @@ export default function App() {
 
 
 //Swipable tab navigator for notifications and messages
+//screenOptions={{tabBarStyle: { backgroundColor: '#ccffcc', top: Constants.statusBarHeight }}}
 function SChat(){
   return(
-    <STab.Navigator screenOptions={{tabBarStyle: { backgroundColor: 'powderblue', top: Constants.statusBarHeight }}}>
+    <STab.Navigator screenOptions={{tabBarStyle: {heigh:0,top: Constants.statusBarHeight }}}>
       <STab.Screen  name="ChatScreen" component={ChatScreen}/>
       <Stack.Screen name="Login" component={Login}/>
     </STab.Navigator>
@@ -91,12 +93,14 @@ function SChat(){
 }
 
 
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
-    </View>
-  );
+// Will use this stack afther
+function StackScreen(){
+  return(
+    <Stack.Navigator screenOptions={{headerShown:false}}>
+      <Stack.Screen name="HomePage" component={PrincipalScreen}/>
+      <Stack.Screen name="ItemPage" component={ItemPage}/>
+    </Stack.Navigator>
+  )
 }
 
 function SettingsScreen() {
@@ -158,7 +162,7 @@ function MyTabBar({ state, descriptors, navigation, of, ok }) {
             onLongPress={onLongPress}
             style={{ flex: 1 }}
           >
-            <Text style={{ color: isFocused ? '#673ab7' : '#222' }}>
+            <Text style={{ color: isFocused ? '#009933' : '#222' }}>
               {label}
             </Text>
           </TouchableOpacity>
