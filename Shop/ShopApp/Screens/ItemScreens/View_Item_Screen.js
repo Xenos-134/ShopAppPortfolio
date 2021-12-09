@@ -5,6 +5,7 @@
 import React from "react";
 import { Text, Image, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { FontAwesome } from '@expo/vector-icons';
 import { Main_Screen_1 } from "../MainScreens/Main_Screen_1";
 
 const SCREEN = Dimensions.get("screen")
@@ -12,7 +13,7 @@ import {COLORS} from "../../Components/Colors/colors"
 
 export const ItemPage = ({route}) => {
     const {item} = route.params
-
+    const rate = 3
 
     return(
         <Main_Screen_1>
@@ -63,18 +64,62 @@ export const ItemPage = ({route}) => {
                 width: SCREEN.width*0.95,
                 left: SCREEN.width*0.025, //Im Lazy fuk. Dont know why alignItems doesnt work on top Component
                 borderBottomWidth: 1,
-                borderColor: "#bfbfbf"
+                borderColor: "#bfbfbf",
+                
             }}>
-                <Text style={{fontSize:15, marginTop: SCREEN.height*0.02}}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis porta sollicitudin metus quis pulvinar. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque gravida, augue id mollis pellentesque, lacus magna facilisis nunc, sit amet eleifend est justo ac lorem. Curabitur non arcu ante. Quisque auctor interdum metus, ac commodo turpis commodo sit amet. Fusce nec libero eget lectus volutpat rutrum. Fusce semper fringilla elit, a varius turpis. In urna mi, rhoncus ut feugiat eget, vulputate id dui.
-
-Nam eget gravida leo. Vivamus tortor massa, fermentum volutpat ex nec, fermentum auctor ipsum. Nam pharetra diam eget ante gravida, ut placerat dolor fermentum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer aliquet sapien ut vestibulum vulputate. Maecenas elementum risus nec bibendum imperdiet. Praesent pulvinar feugiat nisi at imperdiet. Phasellus quis venenatis augue, non varius metus. Vestibulum posuere est mauris, sed tincidunt erat pulvinar at. 
-                </Text>
+                <Text style={{
+                    fontSize:15, 
+                    marginTop: SCREEN.height*0.02,
+                    color: "grey",
+                    marginBottom: SCREEN.height*0.02
+                    }}>
+                    {text}
+               </Text>
             </View>
+
+            <View style={{
+                flexDirection:"row",
+                width: SCREEN.width*0.95,
+                left: SCREEN.width*0.025, //Im Lazy fuk. Dont know why alignItems doesnt work on top Component
+                marginBottom: SCREEN.height*0.15,
+                //alignItems:"center",
+   
+                padding:5
+            }}>
+                <Image
+                    source={{uri:"https://picsum.photos/200/201"}}
+                    style={{
+                        width: SCREEN.width*0.15, 
+                        height:SCREEN.width*0.15, 
+                        borderRadius:SCREEN.width*0.075,
+                        marginRight:SCREEN.height*0.02,
+                    }}
+                />
+                <View >
+                    <Text style={{
+                        fontSize:15, 
+                        color: "grey",
+                        }}>
+                        John Peterso
+                    </Text>
+                    <View style={{flexDirection:"row"}}>
+                        <FontAwesome name="star" size={22} color="#e6e600" />
+                        <FontAwesome name={(rate>1)?"star":"star-o"} size={24} color="#e6e600" />
+                        <FontAwesome name={(rate>2)?"star":"star-o"}  size={24} color="#e6e600" />
+                        <FontAwesome name={(rate>3)?"star":"star-o"}  size={24} color="#e6e600" />
+                        <FontAwesome name={(rate>4)?"star":"star-o"}  size={24} color="#e6e600" />
+                    </View>
+                </View>
+            </View>
+
 
             </ScrollView>
             <Pressable style={styles.buy_button}>
-                <Text style={{color:"white", fontSize: 15, fontWeight: "700"}}>
+                <Text style={{
+                    color:"white", 
+                    fontSize: 15, 
+                    fontWeight: "700",
+                    }}>
                     Buy
                 </Text>
             </Pressable>
@@ -98,3 +143,5 @@ const styles = StyleSheet.create({
         borderRadius: SCREEN.height*0.035
     },
 })
+
+const text = " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis porta sollicitudin metus quis pulvinar. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque gravida, augue id mollis pellentesque, lacus magna facilisis nunc, sit amet eleifend est justo ac lorem. Curabitur non arcu ante. Quisque auctor interdum metus, ac commodo turpis commodo sit amet. Fusce nec libero eget lectus volutpat rutrum. Fusce semper fringilla elit, a varius turpis. In urna mi, rhoncus ut feugiat eget, vulputate id dui.Nam eget gravida leo. Vivamus tortor massa, fermentum volutpat ex nec, fermentum auctor ipsum. Nam pharetra diam eget ante gravida, ut placerat dolor fermentum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer aliquet sapien ut vestibulum vulputate. Maecenas elementum risus nec bibendum imperdiet. Praesent pulvinar feugiat nisi at imperdiet. Phasellus quis venenatis augue, non varius metus. Vestibulum posuere est mauris, sed tincidunt erat pulvinar at"
