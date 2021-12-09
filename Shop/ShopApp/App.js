@@ -46,6 +46,7 @@ const STab = createMaterialTopTabNavigator()
 import { OpenContext } from './Context/AuxContext';
 import { ChatScreen } from './Screens/UserScreens/Chat_Screen';
 import { ItemPage } from './Screens/ItemScreens/View_Item_Screen';
+import { Chat_Chanels } from './Screens/UserScreens/Chat_Chanels_Screen';
 const SCREEN = Dimensions.get("window")
 
 
@@ -73,7 +74,7 @@ export default function App() {
           <Tab.Screen name="Home" component={StackScreen} />
           <Tab.Screen name="+" component={Nothing}/>
           <Tab.Screen name="Chat" component={SChat}/>
-          <Tab.Screen name="Settings" component={SettingsScreen} />
+          <Tab.Screen name="Settings" component={SettingsScreen}/>
         </Tab.Navigator>
       </NavigationContainer>
     </OpenContext.Provider>
@@ -86,8 +87,8 @@ export default function App() {
 function SChat(){
   return(
     <STab.Navigator screenOptions={{tabBarStyle: {heigh:0,top: Constants.statusBarHeight }}}>
+      <Stack.Screen name="Messages" component={Chat_Chanels}/>
       <STab.Screen  name="ChatScreen" component={ChatScreen}/>
-      <Stack.Screen name="Login" component={Login}/>
     </STab.Navigator>
   )
 }
