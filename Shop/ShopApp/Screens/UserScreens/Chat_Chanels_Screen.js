@@ -7,12 +7,12 @@ import {COLORS} from "../../Components/Colors/colors"
 
 const SCREEN = Dimensions.get("screen")
 
-export const Chat_Chanels = () =>{
+export const Chat_Chanels = ({navigation}) =>{
 
 
     const ChatChanelView = ({item}) => {
         return(
-            <Pressable style={styles.chat_chanel_view}>
+            <Pressable style={styles.chat_chanel_view} onPress={()=>navigation.navigate("Private_Chat")}>
                 <Image
                     source={{uri: `https://picsum.photos/100/101${item.id}`}}
                     style={{

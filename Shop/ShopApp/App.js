@@ -47,6 +47,7 @@ import { OpenContext } from './Context/AuxContext';
 import { ChatScreen } from './Screens/UserScreens/Chat_Screen';
 import { ItemPage } from './Screens/ItemScreens/View_Item_Screen';
 import { Chat_Chanels } from './Screens/UserScreens/Chat_Chanels_Screen';
+import { NewItemCarPage } from './Screens/ItemScreens/NewItemClassPages/New_Item_Car';
 const SCREEN = Dimensions.get("window")
 
 
@@ -64,7 +65,6 @@ export default function App() {
 
   function sok(flag){ //Function to hide tab navigator
     setOk(flag)
-    //console.log("Tentamos Abrir chat - ", ok, "/", flag)
   }
 
   return (
@@ -72,7 +72,7 @@ export default function App() {
       <NavigationContainer >
         <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
           <Tab.Screen name="Home" component={StackScreen} />
-          <Tab.Screen name="+" component={Nothing}/>
+          <Tab.Screen name="+" component={StackScreen}/>
           <Tab.Screen name="Chat" component={SChat}/>
           <Tab.Screen name="Settings" component={SettingsScreen}/>
         </Tab.Navigator>
@@ -87,9 +87,19 @@ export default function App() {
 function SChat(){
   return(
     <STab.Navigator screenOptions={{tabBarStyle: {heigh:0,top: Constants.statusBarHeight }}}>
-      <Stack.Screen name="Messages" component={Chat_Chanels}/>
-      <STab.Screen  name="ChatScreen" component={ChatScreen}/>
+      <Stack.Screen name="Messages" component={ChatStack}/>
+      <STab.Screen  name="Alerts" component={ChatScreen}/>
     </STab.Navigator>
+  )
+}
+
+
+function ChatStack(){
+  return(
+    <Stack.Navigator screenOptions={{headerShown:false}}>
+      <Stack.Screen name="MessagesList" component={Chat_Chanels}/>
+      <Stack.Screen name="Private_Chat" component={ChatScreen} />
+    </Stack.Navigator>
   )
 }
 
@@ -100,10 +110,13 @@ function StackScreen(){
     <Stack.Navigator screenOptions={{headerShown:false}}>
       <Stack.Screen name="HomePage" component={PrincipalScreen}/>
       <Stack.Screen name="ItemPage" component={ItemPage}/>
+      <Stack.Screen name="NewCar" component={NewItemCarPage} />
     </Stack.Navigator>
   )
 }
 
+
+//Temporary Component
 function SettingsScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -116,10 +129,11 @@ function Nothing() {
     return(null)
 }
 
+
+//Tab Bar Navigator Component
 function MyTabBar({ state, descriptors, navigation, of, ok }) {
   return (
     <View style={{ flexDirection: 'row', height:ok?0:SCREEN.height*0.075, alignItems:"center", justifyContent:"center", elevation: 10}}>
-
 
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
@@ -133,7 +147,7 @@ function MyTabBar({ state, descriptors, navigation, of, ok }) {
         const isFocused = state.index === index;
 
         const onPress = () => {
-          if(label==="+") return of()
+          if(label==="+") of() //talvez fazer aqui ur return
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,

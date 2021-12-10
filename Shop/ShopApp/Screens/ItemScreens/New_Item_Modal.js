@@ -1,3 +1,4 @@
+//Page for 2nd Modal
 import React, {useState} from "react"
 import { 
     Modal, 
@@ -13,18 +14,40 @@ import { NewItemFieldsModal } from "./New_Item_Fields_Modal"
 
 const SCREEN = Dimensions.get("window")
 
-export const NewItemModal = ({modalVisible, setMV}) => {
+export const NewItemModal = ({modalVisible, setMV, navigation}) => {
     const [fieldsModal, setFM] = useState(false)
     const [fields, setFields] = useState(null)
 
     function newItem(category){
-        setFM(true)
-        for(element in DATA){
-            if(DATA[element].title === category){
-                console.log("We want new ", category)
-                setFields(DATA[element].fields)
+        // setFM(true)
+        // for(element in DATA){
+        //     if(DATA[element].title === category){
+        //         console.log("We want new ", category)
+        //         setFields(DATA[element].fields)
+        //     }
+        // }
+        switch(category){
+            case "Cars":{
+                console.log("We want new Cars")
+                return navigation.navigate("NewCar")
+            }
+            case "Books":{
+                return console.log("We want new Book")
+            }
+            case "Bikes":{
+                return console.log("We want new Bike")
+            }
+            case "Cell Phones":{
+                return console.log("We want new ", category)
+            }
+            case "Jobs":{
+                return console.log("We want new ", category)
+            }
+            default: {
+                return console.log("WE WANT UNDEFINED ITEM")
             }
         }
+
     }
 
     const renderItem = ({ item }) => (
@@ -59,11 +82,12 @@ export const NewItemModal = ({modalVisible, setMV}) => {
                         renderItem={renderItem}
                         keyExtractor={item => item.title}
                     />
-                    <NewItemFieldsModal title={"TITULO QQR"} setFM={setFM} open={fieldsModal} fields={fields}/>
                 </View>
         </Modal>
     )
 }
+
+//<NewItemFieldsModal title={"TITULO QQR"} setFM={setFM} open={fieldsModal} fields={fields}/>
 
 const styles = StyleSheet.create({    
     modal_box:{

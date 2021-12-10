@@ -76,7 +76,7 @@ export const PrincipalScreen = ({navigation}) => {
                 renderItem={({item})=>ItemListRow({item, navigate})}
                 ListFooterComponent={()=><View style={{height: SCREEN.height*0.1}}/>}
             />
-            <NewItemModal modalVisible={oc.open} setMV={oc.of}/>
+            <NewItemModal modalVisible={oc.open} setMV={oc.of} navigation={navigation}/>
         </Main_Screen_1>
     )
 }

@@ -1,3 +1,4 @@
+//3rd modal
 import React, { useEffect, useState } from "react";
 import { 
     Modal, 
@@ -208,6 +209,7 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
                 style={styles.newItemFields}
                 keyExtractor={item=>item.title}
                 renderItem={renderFields}
+                removeClippedSubviews={false}
             />
             <View style={{alignItems:"center", position:"absolute", width:SCREEN.width, top: SCREEN.height*0.87}}>
                         <Pressable
