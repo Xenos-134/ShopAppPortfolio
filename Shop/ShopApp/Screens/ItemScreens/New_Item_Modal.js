@@ -1,5 +1,5 @@
 //Page for 2nd Modal
-import React, {useState} from "react"
+import React, {useState, useContext} from "react"
 import { 
     Modal, 
     StyleSheet,
@@ -10,13 +10,14 @@ import {
     Pressable
 } from "react-native"
 import { NewItemFieldsModal } from "./New_Item_Fields_Modal"
-
+import {OpenContext} from "../../Context/AuxContext"
 
 const SCREEN = Dimensions.get("window")
 
 export const NewItemModal = ({modalVisible, setMV, navigation}) => {
     const [fieldsModal, setFM] = useState(false)
     const [fields, setFields] = useState(null)
+    const auxContext  = useContext(OpenContext)
 
     function newItem(category){
         // setFM(true)
@@ -28,7 +29,8 @@ export const NewItemModal = ({modalVisible, setMV, navigation}) => {
         // }
         switch(category){
             case "Cars":{
-                console.log("We want new Cars")
+                console.log("We want new Cars", auxContext.open)
+                auxContext.of()
                 return navigation.navigate("NewCar")
             }
             case "Books":{

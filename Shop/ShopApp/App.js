@@ -59,7 +59,7 @@ export default function App() {
 
 
   function of(){ //openfunction
-    console.log("ESTAMOS A ABRIR")
+    console.log("ESTAMOS A ABRIR/FECHAR")
     setOpen(!open)    
   }
 
@@ -147,7 +147,7 @@ function MyTabBar({ state, descriptors, navigation, of, ok }) {
         const isFocused = state.index === index;
 
         const onPress = () => {
-          if(label==="+") of() //talvez fazer aqui ur return
+          if(label==="+") return of() //talvez fazer aqui ur return
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
