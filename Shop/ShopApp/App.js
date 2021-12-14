@@ -88,7 +88,7 @@ function SChat(){
   return(
     <STab.Navigator screenOptions={{tabBarStyle: {heigh:0,top: Constants.statusBarHeight }}}>
       <Stack.Screen name="Messages" component={ChatStack}/>
-      <STab.Screen  name="Alerts" component={ChatScreen}/>
+      <STab.Screen  name="Alerts" component={Notifications}/>
     </STab.Navigator>
   )
 }

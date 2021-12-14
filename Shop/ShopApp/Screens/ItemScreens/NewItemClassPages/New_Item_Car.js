@@ -219,8 +219,6 @@ const styles = StyleSheet.create({
 
 //Temporary data just to test 
 
-
-
 //Passar para detro de uma funcao
 const newCarSchema = {
     images: [],
