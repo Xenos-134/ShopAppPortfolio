@@ -10,6 +10,7 @@ import { StyleSheet,
   TouchableOpacity, 
   Dimensions,
 } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 
 //---------------------------------------------------------
@@ -146,8 +147,32 @@ function MyTabBar({ state, descriptors, navigation, of, ok }) {
 
         const isFocused = state.index === index;
 
+        var icon_label;
+        switch(label){
+          case "Home":{
+            icon_label = "home"
+            break;
+          }
+          case "Chat":{
+            icon_label = "message-square"
+            break
+          }
+          case "+":{
+            icon_label = "plus-circle"
+            break
+          }
+          case "Settings":{
+            icon_label = "settings"
+            break
+          }
+          default:{ //Add something here
+            icon_label="random"
+          }
+        }
+
+
         const onPress = () => {
-          if(label==="+") return of() //talvez fazer aqui ur return
+          if(label==="+") return of()
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
@@ -155,8 +180,8 @@ function MyTabBar({ state, descriptors, navigation, of, ok }) {
 
           if (!isFocused && !event.defaultPrevented) {
             navigation.navigate(route.name);
-          }
-        };
+            }
+          };
 
         const onLongPress = () => {
           navigation.emit({
@@ -165,7 +190,38 @@ function MyTabBar({ state, descriptors, navigation, of, ok }) {
           });
         };
 
-        
+
+
+        if(label === "+"){
+          return(
+            <TouchableOpacity
+              key={route.key}
+              accessibilityRole="button"
+              accessibilityState={isFocused ? { selected: true } : {}}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              style={{ flex: 1, alignItems:"center" }}
+            >
+              <View style={
+                  {backgroundColor:"white", 
+                  height: SCREEN.height*0.12, 
+                  width: SCREEN.height*0.12,
+                  borderRadius: SCREEN.height*0.06,
+
+                  alignItems:"center", 
+                  justifyContent:"center",
+                }
+                }>
+                <Feather name={icon_label} size={32} color={isFocused?"#009933":"#222"} />
+              </View>
+            </TouchableOpacity>
+          )
+        }
+
+
+
         return (
           <TouchableOpacity
             key={route.key}
@@ -175,11 +231,9 @@ function MyTabBar({ state, descriptors, navigation, of, ok }) {
             testID={options.tabBarTestID}
             onPress={onPress}
             onLongPress={onLongPress}
-            style={{ flex: 1 }}
+            style={{ flex: 1, alignItems:"center" }}
           >
-            <Text style={{ color: isFocused ? '#009933' : '#222' }}>
-              {label}
-            </Text>
+            <Feather name={icon_label} size={24} color={isFocused?"#009933":"#222"} />
           </TouchableOpacity>
         );
       })}
@@ -202,3 +256,9 @@ const config = {
 
 
 
+{/* <Text style={{ color: isFocused ? '#009933' : '#222' }}>
+{label}
+
+<Feather name="home" size={24} color={isFocused?"#009933":"#222"} />
+
+</Text> */}
