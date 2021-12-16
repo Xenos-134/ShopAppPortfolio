@@ -114,15 +114,27 @@ export const ItemPage = ({route}) => {
 
 
             </ScrollView>
-            <Pressable style={styles.buy_button}>
-                <Text style={{
-                    color:"white", 
-                    fontSize: 15, 
-                    fontWeight: "700",
-                    }}>
-                    Buy
-                </Text>
-            </Pressable>
+            <View style={{flexDirection:"row", width: SCREEN.width, justifyContent:"center"}}>
+                <Pressable style={styles.buy_button}>
+                    <Text style={{
+                        color:"white", 
+                        fontSize: 15, 
+                        fontWeight: "700",
+                        }}>
+                        Buy
+                    </Text>
+                </Pressable>
+
+                <Pressable style={[styles.buy_button, {backgroundColor:COLORS.orange}]}>
+                    <Text style={{
+                        color:"white", 
+                        fontSize: 15, 
+                        fontWeight: "700",
+                        }}>
+                        Send Message
+                    </Text>
+                </Pressable>
+            </View>
         </Main_Screen_1>
     )
 }
@@ -138,9 +150,9 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.green, 
         width: SCREEN.width*0.45,
         height: SCREEN.height*0.07,  
-        position: "absolute",
         bottom: SCREEN.height*0.06,
-        borderRadius: SCREEN.height*0.035
+        borderRadius: SCREEN.height*0.035,
+        marginHorizontal: 10
     },
 })
 
