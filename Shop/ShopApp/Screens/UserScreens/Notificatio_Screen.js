@@ -4,6 +4,7 @@ import { Main_Screen_1 } from "../MainScreens/Main_Screen_1";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {COLORS} from "../../Components/Colors/colors"
 import { useEffect, useState } from "react/cjs/react.development";
+import { Feather } from "@expo/vector-icons";
 
 const SCREEN = Dimensions.get("screen")
 
@@ -55,9 +56,13 @@ const MessageNotification = ({title, body, image, ff}) =>{
                 style={
                     {backgroundColor: COLORS.orange, 
                     width: SCREEN.width*0.2, 
-                    height:SCREEN.height*0.12}
+                    height:SCREEN.height*0.12,
+                    alignItems:"center",
+                    justifyContent:"center"
+                    }
                     }>
-                <Text>test</Text>
+                
+                <Feather name="check-square" color="white" size={25}/>
             </Pressable>
         )
     }

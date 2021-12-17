@@ -23,6 +23,7 @@ import { Login } from './Screens/Auth_Screens/Login_Screen';
 import { PrincipalScreen } from './Screens/Principal_Screen';
 import { NewItemScreen } from './Screens/ItemScreens/NewItem_Screen';
 import { Notifications } from './Screens/UserScreens/Notificatio_Screen';
+import { WishList } from './Screens/ItemScreens/WishList_Screen';
 
 
 //---------------------------------------------------------
@@ -73,6 +74,7 @@ export default function App() {
       <NavigationContainer >
         <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
           <Tab.Screen name="Home" component={StackScreen} />
+          <Tab.Screen name="Wish List" component={WishList}/>
           <Tab.Screen name="+" component={StackScreen}/>
           <Tab.Screen name="Chat" component={SChat}/>
           <Tab.Screen name="Settings" component={SettingsScreen}/>
@@ -134,7 +136,7 @@ function Nothing() {
 //Tab Bar Navigator Component
 function MyTabBar({ state, descriptors, navigation, of, ok }) {
   return (
-    <View style={{ flexDirection: 'row', height:ok?0:SCREEN.height*0.075, alignItems:"center", justifyContent:"center", elevation: 10}}>
+    <View style={{ flexDirection: 'row', height:ok?0:SCREEN.height*0.075, alignItems:"center", justifyContent:"center", elevation: 5}}>
 
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
@@ -163,6 +165,10 @@ function MyTabBar({ state, descriptors, navigation, of, ok }) {
           }
           case "Settings":{
             icon_label = "settings"
+            break
+          }
+          case "Wish List":{
+            icon_label = "heart"
             break
           }
           default:{ //Add something here
