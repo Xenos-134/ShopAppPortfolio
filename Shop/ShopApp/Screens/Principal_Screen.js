@@ -35,7 +35,7 @@ const ItemListRow = ({item, navigate}) => {
 }
 
 
-export const PrincipalScreen = ({navigation}) => {
+export const PrincipalScreen = ({navigation, route}) => {
     const [modalVisible, setMV] = useState(false)
     const [pairs, setPairs] = useState() //list for pairs for pairs of the elements 
     const [isLoaded, setLoaded] = useState(false)

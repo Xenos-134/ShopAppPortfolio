@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { Main_Screen_1 } from "../MainScreens/Main_Screen_1";
 import {
     Text, 
@@ -6,19 +6,49 @@ import {
     View, 
     Pressable, 
     Dimensions,
-    Image
+    Image,
+    StyleSheet
 } from "react-native" 
 import { SimpleLineIcons } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons'; 
+import { OpenContext } from "../../Context/AuxContext";
 
 
 const SCREEN = Dimensions.get("screen")
 
-export const WishList = () => {
+export const WishList = ({navigation, route}) => {
     
     const [x, sx] = useState()
     const [y, sy] = useState()
     const [open, setOpen] = useState(false)
+    const [currentItem, setCU] = useState(null) //Im lazy fuk
+    const [items, setItems] = useState(null)
+
+    useEffect(()=>{
+        setItems(WISH_LIST)
+    },[])
+
+
+    //Delete option
+    async function deleteItem(id){
+        const new_items = await items.filter(elm => elm.id !== id)
+        setItems(new_items)
+        setOpen(false)
+    }
+
+    //Chat with owner option
+    async function chatWithOwner(){
+        setOpen(false)
+        navigation.navigate("Chat")
+    }
+
+    async function viewItemPage(){
+        setOpen(false)
+        navigation.navigate("Home", {
+            screen: "ItemPage",
+            params: {item: currentItem}
+        })
+    }
 
 
 
@@ -54,6 +84,7 @@ export const WishList = () => {
                     <Pressable
                         onPress={(e)=>{
                             setOpen(false)
+                            setCU(item)
                             sx(e.nativeEvent.pageX)
                             sy(e.nativeEvent.pageY)
                             setOpen(true)
@@ -76,48 +107,53 @@ export const WishList = () => {
         <Main_Screen_1>
             <Text>My WishList</Text>
             <FlatList
-                data={WISH_LIST}
+                data={items}
                 onScroll={()=>setOpen(false)}
                 renderItem={renderFLItem}
                 keyExtractor={item=> item.id}
                 ListFooterComponent={()=><View style={{height: SCREEN.height*0.25}}/>}
-
             />
             {open && 
                 <View
                     style={{
                         position:"absolute",
                         width: SCREEN.width*0.3,
-                        
-                        borderWidth: 2,
+                     
                         top: y-SCREEN.height*0.09,
                         left: x-SCREEN.width*0.25,
                         backgroundColor: "white",
-                        borderRadius: SCREEN.height*0.02,
+                        //borderRadius: SCREEN.height*0.02,
                         alignItems:"center",
-                        paddingVertical: 10
+                        paddingVertical: 10,
+                        elevation: 5
                     }}>
                     <Pressable style={{marginBottom: 9}}onPress={()=>setOpen(false)}>
                                 <AntDesign name="close" size={20} color="black" />
                     </Pressable>
 
                     <View style={{width:"100%", alignItems: "flex-start", paddingLeft: 10}}>
-                        <Pressable style={{flexDirection:"row", marginBottom: 5}}>
+                        <Pressable
+                            onPress={()=>deleteItem(currentItem.id)} 
+                            style={styles.itemOptions}>
                                 <AntDesign name="delete" size={20} color="black" />
                                 <Text>Delete</Text>
                         </Pressable>
 
-                        <Pressable style={{flexDirection:"row", marginBottom: 5}}>
+                        <Pressable 
+                            onPress={chatWithOwner}
+                            style={styles.itemOptions}>
                                 <AntDesign name="mail" size={20} color="black" />
                                 <Text>Chat</Text>
                         </Pressable>
 
-                        <Pressable style={{flexDirection:"row", marginBottom: 5}}>
+                        <Pressable style={styles.itemOptions}>
                                 <AntDesign name="shoppingcart" size={20} color="black" />
                                 <Text>Buy</Text>
                         </Pressable>
                         
-                        <Pressable style={{flexDirection:"row", marginBottom: 5}}>
+                        <Pressable
+                            onPress={()=>viewItemPage()} 
+                            style={styles.itemOptions}>
                                 <AntDesign name="eyeo" size={20} color="black" />
                                 <Text>View</Text>
                         </Pressable>
@@ -136,3 +172,10 @@ const WISH_LIST = [
     {id: 4, title: "Food", price: 6},
     {id: 5, title: "M Parts", price: 3},
 ]
+
+const styles = StyleSheet.create({
+    itemOptions:{
+        flexDirection:"row", 
+        marginBottom: 5
+    }
+})
