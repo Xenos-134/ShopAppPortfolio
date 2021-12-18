@@ -8,10 +8,15 @@ import { View,
     StyleSheet, 
     Pressable,
     Modal,
-    FlatList 
+    FlatList,
+    Button,
+    Image 
 } from "react-native";
-
+import * as ImagePicker from 'expo-image-picker';
+import { Feather } from '@expo/vector-icons'; 
 import { useEffect, useState } from "react/cjs/react.development";
+
+//Custom components
 import { COLORS } from "../../../Components/Colors/colors";
 import { Main_Screen_1 } from "../../MainScreens/Main_Screen_1";
 
@@ -29,6 +34,35 @@ export const NewItemCarPage=()=>{
         setNCS(newCarSchema) // use Function
         setInitialBrandFields()
     },[])
+
+    const [image, setImage] = useState(null);
+        useEffect(() => {
+            (async () => {
+            if (Platform.OS !== 'web') {
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== 'granted') {
+                alert('Sorry, we need camera roll permissions to make this work!');
+            }
+        }
+        })();
+    }, []);
+
+    //Function to select image from the galery
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        });
+        
+        console.log(result);
+        
+        if (!result.cancelled) {
+        setImage(result.uri);
+        }
+    };
+
 
     async function setInitialBrandFields(){
         const brands =  await Object.keys(CarSelectors.Brand)
@@ -96,8 +130,26 @@ export const NewItemCarPage=()=>{
         <Main_Screen_1>
             <ScrollView style={{flex:1}}>
                 <Text>
-                    Page to create enw item without modal
+                    Page to create new item without modal
                 </Text>
+                <Pressable 
+                    style={{
+                        width: SCREEN.width*0.2, 
+                        height:SCREEN.width*0.2, 
+                        backgroundColor: "grey",
+                        borderRadius: SCREEN.width* 0.04,
+                        alignItems:"center",
+                        justifyContent:"center"
+                    }}
+                    onPress={pickImage}>
+                    {image?<Image source={{ uri: image }} style={{
+                        width: SCREEN.width*0.2, 
+                        height:SCREEN.width*0.2, 
+                    }}/>
+                    :
+                            <Feather name="camera" size={28} color="black" />
+                    }
+                </Pressable>
                 <CustomTextInput title={"Description"} updateField={text=>updateTextField(text, "Description")}/>
                 <CustomTextInput title={"Version"} updateField={text=>updateTextField(text, "Version")}/>
                 <CustomSelector schema={new_car_schema} title={"Brand"} mf={async ()=>selectorPressHandler(await Object.keys(CarSelectors.Brand), "Brand")}/>
@@ -177,7 +229,7 @@ const CustomSelectoWD = ({title, mf, dep, tm, td}) => {
     return(
         <View style={styles.fields} onPress={mf}>
             <Text style={{color: "red"}}>
-                Locked {title}
+                {title} (Locked)
             </Text>
         </View>
     )
