@@ -50,6 +50,7 @@ import { ChatScreen } from './Screens/UserScreens/Chat_Screen';
 import { ItemPage } from './Screens/ItemScreens/View_Item_Screen';
 import { Chat_Chanels } from './Screens/UserScreens/Chat_Chanels_Screen';
 import { NewItemCarPage } from './Screens/ItemScreens/NewItemClassPages/New_Item_Car';
+import { Settings_Screen } from './Screens/Setting_Screen';
 const SCREEN = Dimensions.get("window")
 
 
@@ -71,7 +72,7 @@ export default function App() {
 
   return (
     <OpenContext.Provider value={{of, open, ok, sok}}>
-      <NavigationContainer >
+      <NavigationContainer>
         <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
           <Tab.Screen name="Home" component={StackScreen} />
           <Tab.Screen name="Wish List" component={WishList}/>
@@ -119,12 +120,11 @@ function StackScreen(){
 }
 
 
+<Settings_Screen/>
 //Temporary Component
 function SettingsScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
-    </View>
+    <SignUp/>
   );
 }
 
