@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef, useContext } from "react"
 import { 
     View, 
     StyleSheet, 
@@ -21,6 +21,7 @@ import {COLORS} from "../Components/Colors/colors"
 import { MainScreen } from "../Components/ScreenBackGround/Main_Screen_Component";
 import { useFetch } from "../Hooks/fetchHook";
 
+
 const WINDOW = Dimensions.get("window")
 
 export const SignUp = () => {
@@ -31,7 +32,6 @@ export const SignUp = () => {
     var pf = useRef({width: new Animated.Value(WINDOW.width*0.8), height: new Animated.Value(WINDOW.height*0.08)}).current //for Password Field
 
     const fetch = useFetch()
-
 
     useEffect(()=>{
         const keybardDidShowListener = Keyboard.addListener("keyboardDidShow",()=> setKS(true))
@@ -101,7 +101,12 @@ export const SignUp = () => {
 }
 
     async function buttonPressHandler(){
-        await fetch.signUp(input.username, input.password)
+        try{
+            await fetch.signUp(input.username, input.password)
+            console.log("Success")
+        }catch(e){
+            console.log("Catched error: ", e)
+        }
     }
 
     return(

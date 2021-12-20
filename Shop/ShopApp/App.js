@@ -9,6 +9,7 @@ import { StyleSheet,
   View, 
   TouchableOpacity, 
   Dimensions,
+  AsyncStorage,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
@@ -24,6 +25,11 @@ import { PrincipalScreen } from './Screens/Principal_Screen';
 import { NewItemScreen } from './Screens/ItemScreens/NewItem_Screen';
 import { Notifications } from './Screens/UserScreens/Notificatio_Screen';
 import { WishList } from './Screens/ItemScreens/WishList_Screen';
+import { ChatScreen } from './Screens/UserScreens/Chat_Screen';
+import { ItemPage } from './Screens/ItemScreens/View_Item_Screen';
+import { Chat_Chanels } from './Screens/UserScreens/Chat_Chanels_Screen';
+import { NewItemCarPage } from './Screens/ItemScreens/NewItemClassPages/New_Item_Car';
+import { Settings_Screen } from './Screens/Setting_Screen';
 
 
 //---------------------------------------------------------
@@ -46,19 +52,16 @@ const STab = createMaterialTopTabNavigator()
 
 //Context
 import { OpenContext } from './Context/AuxContext';
-import { ChatScreen } from './Screens/UserScreens/Chat_Screen';
-import { ItemPage } from './Screens/ItemScreens/View_Item_Screen';
-import { Chat_Chanels } from './Screens/UserScreens/Chat_Chanels_Screen';
-import { NewItemCarPage } from './Screens/ItemScreens/NewItemClassPages/New_Item_Car';
-import { Settings_Screen } from './Screens/Setting_Screen';
+
 const SCREEN = Dimensions.get("window")
+import {AuthContext} from "./Context/AuthContext"
 
 
 
 export default function App() {
   const [open, setOpen] = useState(false)
   const [ok, setOk] = useState(false) //opened Keyboard
-
+  const [userToken, setUserToken] = useState(null)
 
 
   function of(){ //openfunction
@@ -70,18 +73,38 @@ export default function App() {
     setOk(flag)
   }
 
+  useEffect(()=>{
+    getItemFromStorage()
+  },[])
+
+  useEffect(()=>{
+    saveTokenToStorage(userToken)
+  },[userToken])
+
+  async function saveTokenToStorage(token){
+    AsyncStorage.setItem("Storage", await JSON.stringify({token}))
+  }
+
+  async function getItemFromStorage(){
+    const token = await JSON.parse(await AsyncStorage.getItem("Storage"))
+    console.log("My token is ", token)
+  }
+
+
   return (
-    <OpenContext.Provider value={{of, open, ok, sok}}>
-      <NavigationContainer>
-        <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
-          <Tab.Screen name="Home" component={StackScreen} />
-          <Tab.Screen name="Wish List" component={WishList}/>
-          <Tab.Screen name="+" component={StackScreen}/>
-          <Tab.Screen name="Chat" component={SChat}/>
-          <Tab.Screen name="Settings" component={SettingsScreen}/>
-        </Tab.Navigator>
-      </NavigationContainer>
-    </OpenContext.Provider>
+    <AuthContext.Provider value={{userToken, setUserToken}}>
+      <OpenContext.Provider value={{of, open, ok, sok}}>
+        <NavigationContainer>
+          <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
+            <Tab.Screen name="Home" component={StackScreen} />
+            <Tab.Screen name="Wish List" component={WishList}/>
+            <Tab.Screen name="+" component={StackScreen}/>
+            <Tab.Screen name="Chat" component={SChat}/>
+            <Tab.Screen name="Settings" component={SettingsScreen}/>
+          </Tab.Navigator>
+        </NavigationContainer>
+      </OpenContext.Provider>
+    </AuthContext.Provider>
   );
 }
 
@@ -124,7 +147,7 @@ function StackScreen(){
 //Temporary Component
 function SettingsScreen() {
   return (
-    <SignUp/>
+    <Login/>
   );
 }
 

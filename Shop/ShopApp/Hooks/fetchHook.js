@@ -10,13 +10,28 @@ export const useFetch = () => {
         return response
     }
 
+
+    //Sign Up sender function
     async function signUp(username, password){
-        //const response = await axios.post(SERVER_ADDR+"/auth/signUp", {username, password})
-        axios.post(SERVER_ADDR+"/auth/signUp", {username, password})
+        const response = await axios.post(SERVER_ADDR+"/auth/signUp", {username, password})
+        if(response.status !== 200) throw new fetchException("Some Error On Server Side")
+        return
+    }
+
+    async function logIn(username, password){
+        const response = await axios.post(SERVER_ADDR+"/auth/logIn", {username, password})
+        if(response.status !== 200) throw new fetchException("Some Error On Server Side")
+        return response.data.userToken
     }
 
     return {
         ping,
         signUp,
+        logIn
     }
+}
+
+function fetchException(message){
+    this.message = message
+    this.name = "fetchException"
 }

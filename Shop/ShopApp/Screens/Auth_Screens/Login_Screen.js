@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef, useContext } from "react"
 import { 
     View, 
     StyleSheet, 
@@ -19,15 +19,21 @@ import { TouchableHighlight } from "react-native-gesture-handler";
 //---------------------------------------------------------
 import {COLORS} from "../../Components/Colors/colors"
 import { MainScreen } from "../../Components/ScreenBackGround/Main_Screen_Component";
+import { useFetch } from "../../Hooks/fetchHook";
+import {AuthContext} from "../../Context/AuthContext"
+
 
 const WINDOW = Dimensions.get("window")
 
 export const Login = () => {
     const [ks, setKS] = useState(false)
-    const [input, setInput] = useState({email:"", password: ""})
+    const [input, setInput] = useState({username:"", password: ""})
     const [ei, setEI] = useState({activated: false, width: WINDOW.width*0.8, height: WINDOW.height*0.08})
     var ef = useRef({width: new Animated.Value(WINDOW.width*0.8), height: new Animated.Value(WINDOW.height*0.08)}).current //for Email Field
     var pf = useRef({width: new Animated.Value(WINDOW.width*0.8), height: new Animated.Value(WINDOW.height*0.08)}).current //for Password Field
+    const fetch = useFetch()
+    const auth = useContext(AuthContext)
+
 
     useEffect(()=>{
         const keybardDidShowListener = Keyboard.addListener("keyboardDidShow",()=> setKS(true))
@@ -96,6 +102,16 @@ export const Login = () => {
         }).start()
 }
 
+    async function logIn(){
+        console.log(input.username, input.password)
+        try{
+            const token = await fetch.logIn(input.username, input.password)
+            auth.setUserToken(token)
+        }catch(e){
+            console.log("Error: ", e)
+        }
+    }
+
     return(
         <MainScreen>
             <ImageBackground source = {require("../../background.jpg")} style = {styles.main_screen}>
@@ -105,9 +121,9 @@ export const Login = () => {
                 <Animated.View style={[styles.username_input, {width: ef.width, height: ef.height}]}>
                     <TextInput
                         style={{flex:1}}
-                        onChangeText={(text)=>setInput({...input, email: text})}
-                        placeholder="Email"
-                        value={input.email}
+                        onChangeText={(text)=>setInput({...input, username: text})}
+                        placeholder="Username"
+                        value={input.username}
                         textAlign="center"
                         onFocus={hoverInEI}
                         onEndEditing={hoverOut}
@@ -127,7 +143,7 @@ export const Login = () => {
                 </Animated.View>
                 {!ks &&                 
                     <View style={styles.register_button_box}>
-                        <TouchableHighlight onPress={()=>console.log(input)} style={styles.register_button} underlayColor="#cc5200">
+                        <TouchableHighlight onPress={logIn} style={styles.register_button} underlayColor="#cc5200">
                                 <Text style={styles.button_text}>Login</Text>
                         </TouchableHighlight>
                     </View>
