@@ -19,6 +19,7 @@ import { useEffect, useState } from "react/cjs/react.development";
 //Custom components
 import { COLORS } from "../../../Components/Colors/colors";
 import { Main_Screen_1 } from "../../MainScreens/Main_Screen_1";
+import { useFetch } from "../../../Hooks/fetchHook";
 
 const SCREEN = Dimensions.get("screen")
 
@@ -29,14 +30,20 @@ export const NewItemCarPage=()=>{
     const [modalList, setML] = useState(null) //List that we use as data on the to render fields of the modal
     const [loaded, setLoaded] = useState(false)
     const [selector, setSelector] = useState("") //title of the selector that we are triying to update
+    const fetch = useFetch()
+    const [image, setImage] = useState(null);
 
     useEffect(()=>{
         setNCS(newCarSchema) // use Function
         setInitialBrandFields()
     },[])
 
-    const [image, setImage] = useState(null);
-        useEffect(() => {
+    useEffect(()=>{
+        if(new_car_schema) setLoaded(true)
+    },[new_car_schema])
+
+
+    useEffect(() => {
             (async () => {
             if (Platform.OS !== 'web') {
                 const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -46,6 +53,16 @@ export const NewItemCarPage=()=>{
         }
         })();
     }, []);
+
+    //function to send form to server
+    async function submitHandler(){ //Add here alert in case of inssucess
+        try{
+            const success = await fetch.newCar(new_car_schema)
+            if(success) console.log("SUCCESS")
+        }catch(e){
+            console.log("FAIL")
+        }
+    }
 
     //Function to select image from the galery
     const pickImage = async () => {
@@ -111,9 +128,6 @@ export const NewItemCarPage=()=>{
         }
 
 
-    useEffect(()=>{
-        if(new_car_schema) setLoaded(true)
-    },[new_car_schema])
 
     if(!loaded){
         return(
@@ -156,7 +170,7 @@ export const NewItemCarPage=()=>{
                 <CustomSelectoWD schema={new_car_schema} title={"Model"} mf={async ()=>selectorPressHandler(CarSelectors.Brand[new_car_schema.Brand], "Model")} dep={true} tm={new_car_schema} td={"Brand"}/>
             </ScrollView>
 
-            <Pressable style={styles.submit_btn} onPress={()=>console.log("Our Form >", new_car_schema)}>
+            <Pressable style={styles.submit_btn} onPress={submitHandler}>
                 <Text style={{color:"white", fontWeight:"700", fontSize:16}}>Submit</Text>
             </Pressable>
 
@@ -273,7 +287,7 @@ const styles = StyleSheet.create({
 
 //Passar para detro de uma funcao
 const newCarSchema = {
-    images: [],
+    images: null,
     Brand: null, //Selector
     Model: null, //Selector
     Description: "", //String

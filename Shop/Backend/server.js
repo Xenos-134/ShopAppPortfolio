@@ -33,6 +33,7 @@ async function start(){
 
 //Routes Section
 app.use("/auth", require("./Routes/auth.routes"))
+app.use("/item", require("./Routes/item.routes"))
 
 start()
 

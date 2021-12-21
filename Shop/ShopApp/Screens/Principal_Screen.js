@@ -9,7 +9,7 @@ import { Main_Screen_1 } from "./MainScreens/Main_Screen_1";
 import { ItemCard } from "../Components/ItemComponents/ItemCard";
 import { NewItemModal } from "./ItemScreens/New_Item_Modal";
 import { FlatList } from "react-native-gesture-handler";
-
+import { useFetch } from "../Hooks/fetchHook";
 
 import { OpenContext } from "../Context/AuxContext"; //My Context
 
@@ -18,7 +18,6 @@ const SCREEN = Dimensions.get("window")
 
 //test is temp arg func to test some shit
 const ItemListRow = ({item, navigate}) => {
-
     if(item.complete){
         return(
             <View style={{flexDirection: "row", width: SCREEN.width, justifyContent:"center"}}>
@@ -40,19 +39,31 @@ export const PrincipalScreen = ({navigation, route}) => {
     const [pairs, setPairs] = useState() //list for pairs for pairs of the elements 
     const [isLoaded, setLoaded] = useState(false)
     const oc = useContext(OpenContext)
+    const fetch = useFetch()
 
     useEffect(()=>{
         arrangePairsHandler(ItemList)
+        getItemsFromServer()
     },[])
 
     useEffect(()=>{
         setLoaded(true)
     },[pairs])
 
+
     //Aux function that i pass inside other component no navigate to item screen
     function navigate(item){
         //console.log("Success", item)
         navigation.navigate("ItemPage", {item})
+    }
+
+    async function getItemsFromServer(){
+        try{
+            const response = await fetch.getAllItems()
+            console.log("RESPONSE ", response)
+        }catch(e){
+            console.log("Some error")
+        }
     }
 
     //Function That aranges my list of items into pairs cuz of 2 items per row

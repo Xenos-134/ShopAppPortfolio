@@ -2,15 +2,16 @@
 //  React Native Components
 //---------------------------------------------------------
 
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import Constants from 'expo-constants';
 import { StyleSheet, 
   Text, 
   View, 
   TouchableOpacity, 
   Dimensions,
-  AsyncStorage,
+  Button,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons';
 
 
@@ -62,6 +63,14 @@ export default function App() {
   const [open, setOpen] = useState(false)
   const [ok, setOk] = useState(false) //opened Keyboard
   const [userToken, setUserToken] = useState(null)
+  const [loggedIn, setLI]= useState(false)
+
+
+  useEffect(()=>{
+    getItemFromStorage()
+    //AsyncStorage.removeItem("storage")
+  },[])
+
 
 
   function of(){ //openfunction
@@ -74,25 +83,49 @@ export default function App() {
   }
 
   useEffect(()=>{
-    getItemFromStorage()
-  },[])
-
-  useEffect(()=>{
     saveTokenToStorage(userToken)
   },[userToken])
 
+  useEffect(()=>{
+    console.log("TEST", loggedIn)
+  },[loggedIn])
+
+
   async function saveTokenToStorage(token){
+    if(!token) return 
     AsyncStorage.setItem("Storage", await JSON.stringify({token}))
+    setUserToken(token)
+    setLI(true)
   }
 
   async function getItemFromStorage(){
     const token = await JSON.parse(await AsyncStorage.getItem("Storage"))
-    console.log("My token is ", token)
+    console.log("Loaded token ", token)
+    if(token.token === null) return
+    setUserToken(token.token)
+    setLI(true)
   }
 
+  async function logOut(){
+    setUserToken(null)
+    await AsyncStorage.removeItem("Storage")
+    setLI(false)
+  }
+
+  if(!loggedIn){
+    return(
+      <AuthContext.Provider value={{userToken, setUserToken}}>
+        <NavigationContainer>
+          <Stack.Navigator  screenOptions={{headerShown:false}}>
+            <Stack.Screen name="Login" component={Login}/>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </AuthContext.Provider>
+    )
+  }
 
   return (
-    <AuthContext.Provider value={{userToken, setUserToken}}>
+    <AuthContext.Provider value={{userToken, setUserToken, logOut}}>
       <OpenContext.Provider value={{of, open, ok, sok}}>
         <NavigationContainer>
           <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
@@ -146,8 +179,14 @@ function StackScreen(){
 <Settings_Screen/>
 //Temporary Component
 function SettingsScreen() {
+  const auth = useContext(AuthContext)
   return (
-    <Login/>
+    <View style={{alignItems:"center", justifyContent:"center"}}>
+      <Button 
+        title='logOut'
+        onPress={()=>auth.logOut()}
+      />
+    </View>
   );
 }
 

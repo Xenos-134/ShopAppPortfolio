@@ -14,6 +14,7 @@ import {
 } from "react-native";
 
 import {COLORS} from "../../Components/Colors/colors"
+import { useFetch } from "../../Hooks/fetchHook";
 
 const SCREEN = Dimensions.get("window")
 
@@ -28,6 +29,7 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
     const [nif, setNIF] = useState(null) //Set New Item Fields
     const [txt, setText] = useState("") //TextInputHolder Used For Strings
     const [flag, setF] = useState(true)
+    const fetch = useFetch()
 
     useEffect(()=>{
         if(fields && fields.length){
@@ -151,7 +153,6 @@ export const NewItemFieldsModal = ({title, setFM, open, fields}) => {
             }
         }
     }
-
 
     async  function submitHandler(){
         presubmitValidation(nif)
