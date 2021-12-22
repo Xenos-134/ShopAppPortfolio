@@ -45,6 +45,7 @@ router.post("/logIn", async (req, res)=>{
     const {username, password} = req.body
     if(!username || !password) return res.status(500).json("No username or password provided")
 
+
     const exist = await User.findOne({username}) 
     if(!exist) return res.status(500).json("No username or password provided")
     

@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios"
 
-const SERVER_ADDR = "http://192.168.1.69:5000"
+const SERVER_ADDR = "http://192.168.0.81:5000"
 
 export const useFetch = () => {
 
@@ -37,13 +37,12 @@ export const useFetch = () => {
     async function getAllItems(){
         try{
             const response = await axios.post(SERVER_ADDR+"/item/all")
-            return response.data
+            return response.data.items
         }catch(e){
             console.log(e)
             throw new fetchException("Error while tring to get all items")
         }
     }
-
 
 
     return {

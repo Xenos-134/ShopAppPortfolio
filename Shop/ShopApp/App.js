@@ -86,9 +86,10 @@ export default function App() {
     saveTokenToStorage(userToken)
   },[userToken])
 
-  useEffect(()=>{
-    console.log("TEST", loggedIn)
-  },[loggedIn])
+  //This shit is watching for changes in state of the userToken 
+  // useEffect(()=>{ 
+  //   console.log("TEST", loggedIn)
+  // },[loggedIn])
 
 
   async function saveTokenToStorage(token){

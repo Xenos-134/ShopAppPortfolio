@@ -168,6 +168,7 @@ export const NewItemCarPage=()=>{
                 <CustomTextInput title={"Version"} updateField={text=>updateTextField(text, "Version")}/>
                 <CustomSelector schema={new_car_schema} title={"Brand"} mf={async ()=>selectorPressHandler(await Object.keys(CarSelectors.Brand), "Brand")}/>
                 <CustomSelectoWD schema={new_car_schema} title={"Model"} mf={async ()=>selectorPressHandler(CarSelectors.Brand[new_car_schema.Brand], "Model")} dep={true} tm={new_car_schema} td={"Brand"}/>
+                <CustomTextInput title={"Price"} updateField={text=>updateTextField(text, "Price")}/>
             </ScrollView>
 
             <Pressable style={styles.submit_btn} onPress={submitHandler}>
@@ -292,7 +293,8 @@ const newCarSchema = {
     Model: null, //Selector
     Description: "", //String
     Version: "", //String
-    Year: null, //Date
+    Year: null, //Date,
+    Price: null, //Integer
 }
 
 //dependencies of each field.  Then will put inside newCarSchema 

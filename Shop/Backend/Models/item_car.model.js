@@ -16,6 +16,13 @@ const CarSchema = new mongoose.Schema({
     photo:{
         type: String
     },
+    price: {
+        type: Number,
+    },
+    modelClass: {
+        type: String,
+        default: "Car"
+    }
 })
 
 

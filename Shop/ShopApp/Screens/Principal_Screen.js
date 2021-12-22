@@ -17,12 +17,12 @@ import { OpenContext } from "../Context/AuxContext"; //My Context
 const SCREEN = Dimensions.get("window")
 
 //test is temp arg func to test some shit
-const ItemListRow = ({item, navigate}) => {
+const ItemListRow = ({item, navigate, getItemTitle}) => {
     if(item.complete){
         return(
             <View style={{flexDirection: "row", width: SCREEN.width, justifyContent:"center"}}>
-                <ItemCard itemData={{title: item.fe.title, price: item.fe.price}} navigate={navigate}/>
-                <ItemCard itemData={{title: `${item.se.title}`, price: item.se.price}} navigate={navigate}/>
+                <ItemCard itemData={{title: getItemTitle(item.fe), price: item.fe.price}} navigate={navigate}/>
+                <ItemCard itemData={{title: getItemTitle(item.se), price: item.se.price}} navigate={navigate}/>
             </View>
         )
     }
@@ -38,18 +38,33 @@ export const PrincipalScreen = ({navigation, route}) => {
     const [modalVisible, setMV] = useState(false)
     const [pairs, setPairs] = useState() //list for pairs for pairs of the elements 
     const [isLoaded, setLoaded] = useState(false)
+    const [itemList, setItemList] = useState()
     const oc = useContext(OpenContext)
     const fetch = useFetch()
 
     useEffect(()=>{
-        arrangePairsHandler(ItemList)
-        getItemsFromServer()
+        //setItemList(ItemList)
+        loadItems()
     },[])
 
     useEffect(()=>{
         setLoaded(true)
     },[pairs])
 
+    //Function that loads item
+    async function loadItems(){
+        try{
+            const items = await getItemsFromServer()
+            setItemList([...items, ...ItemList])
+        }catch(e){
+            console.log("Impossible to load items ", e)
+        }
+    }
+
+    //Called when item list is loaded
+    useEffect(()=>{
+        itemList && arrangePairsHandler(itemList)
+    }, [itemList])
 
     //Aux function that i pass inside other component no navigate to item screen
     function navigate(item){
@@ -59,32 +74,45 @@ export const PrincipalScreen = ({navigation, route}) => {
 
     async function getItemsFromServer(){
         try{
-            const response = await fetch.getAllItems()
-            console.log("RESPONSE ", response)
+            const items = await fetch.getAllItems()
+            return items
         }catch(e){
             console.log("Some error")
+            throw "Some error"
         }
     }
 
+    function getItemTitle(item){
+        switch(item.modelClass){
+            case "Car":
+                return item.brand+" "+item.model+" "+item.version
+            default:
+                return item.title
+        }
+    }
+
+
+
     //Function That aranges my list of items into pairs cuz of 2 items per row
     async function arrangePairsHandler(itemList){
+        //console.log("Our pairs ", itemList)
         var pairs_list = [];
         var i = 0;
             while(i < itemList.length){
                 const pair = {fe: itemList[i], se: itemList[i+1], key: i, complete: itemList[i+1]?true:false }
                 pairs_list.push(pair)
                 i=i+2;
-
             }
         setPairs(pairs_list)        
     }   
+
 
     return(
         <Main_Screen_1>
             <FlatList
                 data={pairs}
                 keyExtractor={item => item.key}
-                renderItem={({item})=>ItemListRow({item, navigate})}
+                renderItem={({item})=>ItemListRow({item, navigate, getItemTitle})}
                 ListFooterComponent={()=><View style={{height: SCREEN.height*0.1}}/>}
             />
             <NewItemModal modalVisible={oc.open} setMV={oc.of} navigation={navigation}/>

@@ -17,11 +17,14 @@ router.post("/newCar", async (req, res)=>{
         new_car.model = car_form.Model
         new_car.description = car_form.Description
         new_car.version = car_form.Version
+        new_car.price = car_form.Price
         //new_car.image = car_form.Image
 
-        //await new_car.save()
+        //console.log("We are trying to create new Car ", new_car)
+        await new_car.save()
         return res.status(200).json("Success")
     }catch(e){
+        console.log(e)
         return res.status(500).json("Error message")
     }
 })
@@ -31,7 +34,7 @@ router.post("/newCar", async (req, res)=>{
 router.post("/all", async (req, res)=>{
     const cars = await Car.find()
     console.log("Our Cars ", cars)
-    return  res.json(cars)
+    return  res.json({items: [...cars]})
 })
 
 module.exports = router
