@@ -88,6 +88,7 @@ export default function App() {
 
   useEffect(()=>{
     saveTokenToStorage(userToken)
+    console.log(userToken)
   },[userToken])
 
   //This shit is watching for changes in state of the userToken 

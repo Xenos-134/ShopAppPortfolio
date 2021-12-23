@@ -22,6 +22,13 @@ const CarSchema = new mongoose.Schema({
     modelClass: {
         type: String,
         default: "Car"
+    },
+    image: {
+        type: String,
+    },
+    ownerId:{
+        type: String,
+        required: true,
     }
 })
 

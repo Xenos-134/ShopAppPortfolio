@@ -57,7 +57,15 @@ export const NewItemCarPage=()=>{
     //function to send form to server
     async function submitHandler(){ //Add here alert in case of inssucess
         try{
-            const success = await fetch.newCar(new_car_schema)
+            const form = new FormData()
+            await form.append("item", await JSON.stringify(new_car_schema))
+            await form.append("image", {
+                name: "image",
+                type: "image/jpg",
+                uri: image
+            })
+            console.log(new_car_schema)
+            const success = await fetch.newCar(form)
             if(success) console.log("SUCCESS")
         }catch(e){
             console.log("FAIL")
@@ -288,7 +296,7 @@ const styles = StyleSheet.create({
 
 //Passar para detro de uma funcao
 const newCarSchema = {
-    images: null,
+    Image: null,
     Brand: null, //Selector
     Model: null, //Selector
     Description: "", //String
@@ -299,7 +307,7 @@ const newCarSchema = {
 
 //dependencies of each field.  Then will put inside newCarSchema 
 const newCarSDependencies = {
-    images: null,
+    Image: null,
     Brand: ["Model"], //Selector
     Model: null, //Selector
     Description: null, //String

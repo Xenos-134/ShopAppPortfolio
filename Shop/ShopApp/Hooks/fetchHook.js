@@ -1,9 +1,12 @@
 import React from "react";
 import axios from "axios"
-
+import {useContext} from "react"
 const SERVER_ADDR = "http://192.168.0.81:5000"
+import {AuthContext} from "../Context/AuthContext"
+
 
 export const useFetch = () => {
+    const auth = useContext(AuthContext)
 
     async function ping(message){
         const response = await axios.get(SERVER_ADDR)
@@ -27,7 +30,18 @@ export const useFetch = () => {
     //Send request to create new Car item
     async function newCar(form){
         try{
-            await axios.post(SERVER_ADDR+"/item/newCar", {form})
+            //await axios.post(SERVER_ADDR+"/item/newCar", {form})
+            await axios({
+                method: "post",
+                //url: SERVER_ADDR+"/item/newCar",
+                url: SERVER_ADDR+"/item/newCar",
+                data: form,
+                headers: {
+                    "Content-Type": "multipart/form-data", 
+                     Authorization: `Bearer ${auth.userToken}` 
+                }
+
+            })
             return true
         }catch(e){
             throw new fetchException("Some error while creating new Car")

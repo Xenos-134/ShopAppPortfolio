@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt")
 const {config} = require("config")
 const User = require("../Models/user.model")
 const crypto = require("crypto")
-
+const auth = require("../Middleware/auth.middleware")
 
 const router = Router()
 
@@ -52,8 +52,7 @@ router.post("/logIn", async (req, res)=>{
     try{
         bcrypt.compare(password, exist.password, async function(err, result){
             if(!result) return res.status(500).json("Error")
-            const token = await crypto.randomBytes(5).toString("hex")
-            const userToken = await jwt.sign({userID: exist._id, token}, "SuperScretToken", {expiresIn: "1h"})
+            const userToken = await jwt.sign({userID: exist._id}, "SuperScretToken", {expiresIn: "1h"})
             return res.status(200).json({userToken})
         })
     }catch(e){
@@ -61,7 +60,7 @@ router.post("/logIn", async (req, res)=>{
     }
 })
 
-router.post("/", (req, res)=> {  //Ping route for this router
+router.get("/", auth, (req, res)=> {  //Ping route for this router
     console.log("test >", req.body)
     return res.json("default")
 })

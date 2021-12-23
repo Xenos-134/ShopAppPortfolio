@@ -18,9 +18,9 @@ const PORT = config.get("port")
 
 //Multer Section
 const storage = multer.diskStorage({
+    
     destination(req, file, callback){
         callback(null, "./media")
-        console.log("WE ARE HERE")
     },
     filename(req, file, callback){
         callback(null, "img_"+Date.now())
@@ -31,18 +31,20 @@ const upload = multer({storage})
 
 io.on('connection', (socket) => {  
     console.log('a user connected');  
-    socket.on('disconnect', () => {    
-        console.log('user disconnected');  
-    });
+    // socket.on('disconnect', () => {    
+    //     console.log('user disconnected');  
+    // });
 });
 
 app.get("/", (req, res)=>  {
     console.log("TEST")
 })
 
-app.post("/upload", upload.single("test"), (req, res)=>{
+
+app.post("/upload", upload.any(), async (req, res)=>{
     console.log("test")
-    console.log(req.file)
+    const item = await JSON.parse(req.body.item)
+    console.log(item)
     console.log(req.files)
 })
 
@@ -65,5 +67,5 @@ app.use("/auth", require("./Routes/auth.routes"))
 app.use("/item", require("./Routes/item.routes"))
 
 start()
-
+module.exports = upload
 

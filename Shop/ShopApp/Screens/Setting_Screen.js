@@ -1,48 +1,23 @@
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { Button, Text } from "react-native";
 import { Main_Screen_1 } from "./MainScreens/Main_Screen_1";
 import { useFetch } from "../Hooks/fetchHook";
-import * as ImagePicker from "expo-image-picker"
 import axios from "axios"
+import {AuthContext} from "../Context/AuthContext"
 
 export const Settings_Screen = () => {
     const fetch = useFetch()
-    const [image, setImage] = useState(null)    
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-        });
-        
-        console.log(result);
-        
-        if (!result.cancelled) {
-        setImage(result.uri);
-        }
+    const auth = useContext(AuthContext)
 
-    };
+    useEffect(()=>{
+        console.log(auth)
+    },[])
 
-
-    async function send(){
-        const form = new FormData()
-        await form.append("test", 
-        {
-            name:"test",
-            type: "image/jpg",
-            uri: image
-        }
-        )
-        console.log(form)
-        axios({
-          method: "post",
-          url: "http://192.168.0.81:5000/upload",
-          data: form,
-          headers: {
-                    "Content-Type": "multipart/form-data",           
-            },
+    async function sendToken(){
+        axios.get("http://192.168.0.81:5000/auth",
+            {
+                headers: {Authorization: `Bearer ${auth.userToken}`}
         })
     }
 
@@ -50,15 +25,13 @@ export const Settings_Screen = () => {
         <Main_Screen_1>
             <Text> New Setttings Screen</Text>
             <Button
-                title="Pick"
-                onPress={pickImage}
+                title="Send"
+                onPress={sendToken}
             />
-
-            <Button
-                title="Send Image"
-                onPress={send}
+            <Button 
+                title="logOut"
+                onPress={auth.logOut}
             />
-            
         </Main_Screen_1>
     )
 }
