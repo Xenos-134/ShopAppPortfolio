@@ -13,7 +13,7 @@ import { StyleSheet,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons';
-
+import io from "socket.io-client"
 
 //---------------------------------------------------------
 //  My Custom Components
@@ -64,14 +64,18 @@ export default function App() {
   const [ok, setOk] = useState(false) //opened Keyboard
   const [userToken, setUserToken] = useState(null)
   const [loggedIn, setLI]= useState(false)
-
+  const [socket, setSocket] = useState(null)
 
   useEffect(()=>{
+      getSocket()
     getItemFromStorage()
     //AsyncStorage.removeItem("storage")
   },[])
 
-
+  async function getSocket(){
+    const socket = await io("http://192.168.0.81:5000")
+    //console.log("socket ", socket)
+  }
 
   function of(){ //openfunction
     console.log("ESTAMOS A ABRIR/FECHAR")
@@ -101,7 +105,6 @@ export default function App() {
 
   async function getItemFromStorage(){
     const token = await JSON.parse(await AsyncStorage.getItem("Storage"))
-    console.log("Loaded token ", token)
     if(token.token === null) return
     setUserToken(token.token)
     setLI(true)
@@ -182,12 +185,7 @@ function StackScreen(){
 function SettingsScreen() {
   const auth = useContext(AuthContext)
   return (
-    <View style={{alignItems:"center", justifyContent:"center"}}>
-      <Button 
-        title='logOut'
-        onPress={()=>auth.logOut()}
-      />
-    </View>
+    <Settings_Screen/>
   );
 }
 
