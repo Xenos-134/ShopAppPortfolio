@@ -17,18 +17,37 @@ import { OpenContext } from "../Context/AuxContext"; //My Context
 const SCREEN = Dimensions.get("window")
 
 //test is temp arg func to test some shit
-const ItemListRow = ({item, navigate, getItemTitle}) => {
+const ItemListRow = ({item, navigate, getItemTitle, addToWL}) => {
     if(item.complete){
         return(
             <View style={{flexDirection: "row", width: SCREEN.width, justifyContent:"center"}}>
-                <ItemCard itemData={{title: getItemTitle(item.fe), price: item.fe.price}} navigate={navigate}/>
-                <ItemCard itemData={{title: getItemTitle(item.se), price: item.se.price}} navigate={navigate}/>
+                <ItemCard 
+                    itemData={{
+                            title: getItemTitle(item.fe), 
+                            price: item.fe.price, 
+                            id: item.fe._id
+                        }}
+                    isLiked={item.fe.liked || false}
+                    addToWL={addToWL} 
+                    navigate={navigate}/>
+                <ItemCard 
+                    itemData={{
+                        title: getItemTitle(item.se), 
+                        price: item.se.price, 
+                        id: item.se._id
+                    }}
+                    isLiked={item.se.liked || false}
+                    addToWL={addToWL} 
+                    navigate={navigate}/>
             </View>
         )
     }
     return(
         <View style={{flexDirection: "row"}}>
-                <ItemCard itemData={{title: item.fe.title, price: item.fe.price}}/>
+                <ItemCard 
+                    itemData={{title: getItemTitle(item.se), price: item.se.price}} 
+                    isLiked={false}
+                    navigate={navigate}/>
         </View>
     )
 }
@@ -42,14 +61,41 @@ export const PrincipalScreen = ({navigation}) => {
     const oc = useContext(OpenContext)
     const fetch = useFetch()
 
+
+    //*****************************************************
+    // useEffect section
+    //*****************************************************
     useEffect(()=>{
         //setItemList(ItemList)
         loadItems()
     },[])
 
+
     useEffect(()=>{
         setLoaded(true)
     },[pairs])
+
+
+    //Called when item list is loaded
+    useEffect(()=>{
+        itemList && arrangePairsHandler(itemList)
+    }, [itemList])
+
+
+    //*****************************************************
+    // Custom Function section
+    //*****************************************************
+
+    //Function that adds/removes item to/from WishList
+    async function addToWL(item){
+        var itemListCopy = itemList
+        if(!item.id) return
+        var selectedItem = await itemListCopy.find(elm => elm._id === item.id)
+        if(!selectedItem.liked) selectedItem.liked = true
+        else  selectedItem.liked = !selectedItem.liked
+        fetch.addToWishList(item.id)
+        setItemList([...itemListCopy])
+    }
 
     //Function that loads item
     async function loadItems(){
@@ -61,10 +107,6 @@ export const PrincipalScreen = ({navigation}) => {
         }
     }
 
-    //Called when item list is loaded
-    useEffect(()=>{
-        itemList && arrangePairsHandler(itemList)
-    }, [itemList])
 
     //Aux function that i pass inside other component no navigate to item screen
     function navigate(item){
@@ -112,7 +154,7 @@ export const PrincipalScreen = ({navigation}) => {
             <FlatList
                 data={pairs}
                 keyExtractor={item => item.key}
-                renderItem={({item})=>ItemListRow({item, navigate, getItemTitle})}
+                renderItem={({item})=>ItemListRow({item, navigate, getItemTitle, addToWL})}
                 ListFooterComponent={()=><View style={{height: SCREEN.height*0.1}}/>}
             />
             <NewItemModal modalVisible={oc.open} setMV={oc.of} navigation={navigation}/>

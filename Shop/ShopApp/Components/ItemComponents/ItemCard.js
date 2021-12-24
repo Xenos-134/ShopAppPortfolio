@@ -4,7 +4,7 @@ import { AntDesign } from '@expo/vector-icons';
 const SCREEN = Dimensions.get("window")
 
 
-export const ItemCard = ({itemData, navigate}) => {
+export const ItemCard = ({itemData, navigate, isLiked, addToWL}) => {
     return(
         <Pressable style={styles.product} onPress={()=>navigate(itemData)}>
             <Image 
@@ -14,9 +14,14 @@ export const ItemCard = ({itemData, navigate}) => {
             />
             <View style={styles.product_price_box}>
                 <Text style={styles.product_price_text}>{itemData.price}$</Text>
-                <View style={styles.product_heart}>
-                    <AntDesign name="hearto" size={20} color="black" />
-                </View>
+                <Pressable 
+                    onPress={()=>addToWL(itemData)}
+                    style={styles.product_heart}>
+                    {isLiked?
+                        <AntDesign name="heart" size={20} color="red" />:
+                        <AntDesign name="hearto" size={20} color="black" />
+                    }
+                </Pressable>
             </View>
             <View style={styles.product_title_box}>
                 <Text style={styles.product_title_text}>{itemData.title}</Text>

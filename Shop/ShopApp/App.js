@@ -78,7 +78,7 @@ export default function App() {
   }
 
   function of(){ //openfunction
-    console.log("ESTAMOS A ABRIR/FECHAR")
+    //console.log("ESTAMOS A ABRIR/FECHAR")
     setOpen(!open)    
   }
 
@@ -88,7 +88,7 @@ export default function App() {
 
   useEffect(()=>{
     saveTokenToStorage(userToken)
-    console.log(userToken)
+    //console.log(userToken)
   },[userToken])
 
   //This shit is watching for changes in state of the userToken 

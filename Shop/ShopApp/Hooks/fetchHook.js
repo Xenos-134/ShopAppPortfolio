@@ -8,6 +8,7 @@ import {AuthContext} from "../Context/AuthContext"
 export const useFetch = () => {
     const auth = useContext(AuthContext)
 
+    //Sends empty request to server
     async function ping(message){
         const response = await axios.get(SERVER_ADDR)
         return response
@@ -48,6 +49,7 @@ export const useFetch = () => {
         }
     }
 
+    //Gets All items that arent in users wish list
     async function getAllItems(){
         try{
             const response = await axios.post(SERVER_ADDR+"/item/all")
@@ -59,12 +61,33 @@ export const useFetch = () => {
     }
 
 
+    //Sends request that user added that item to wish list
+    async function addToWishList(itemID){
+        console.log(itemID)
+        try{
+            const response = await axios.post(
+                SERVER_ADDR+"/item/addToWishList",
+                {itemID}, 
+                {
+                    headers: {
+                         Authorization: `Bearer ${auth.userToken}` 
+                        }
+                    }
+
+            )
+        }catch(e){
+
+        }
+    }
+
+
     return {
         ping,
         signUp,
         logIn,
         newCar,
         getAllItems,
+        addToWishList,
     }
 }
 
