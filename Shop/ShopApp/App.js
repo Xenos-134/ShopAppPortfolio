@@ -135,7 +135,7 @@ export default function App() {
         <NavigationContainer>
           <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
             <Tab.Screen name="Home" component={StackScreen} />
-            <Tab.Screen name="Wish List" component={WishList}/>
+            <Tab.Screen name="Wish List" component={WishList} options={{ unmountOnBlur: true }}/>
             <Tab.Screen name="+" component={StackScreen}/>
             <Tab.Screen name="Chat" component={SChat}/>
             <Tab.Screen name="Settings" component={SettingsScreen}/>

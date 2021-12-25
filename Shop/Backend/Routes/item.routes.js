@@ -72,11 +72,41 @@ async function isInList(user, itemID){
     return list
 }
 
+router.get("/wlItems", auth, async (req, res)=>{
+    const user = await User.findById(req.user.userID)
+    const list = await getUserWL(user.wishList)
+    console.log(list)
+    return res.json(list)
+})
+
+async function getUserWL(wishList){
+    var array = []
+    await Promise.all(
+        wishList.map(async elm=>{
+            const item = await Car.findById(elm)
+            array.push(item)
+            } 
+        )
+    )
+    return array
+}
+
 //Route to get all items from DB
 router.post("/all", async (req, res)=>{
     const cars = await Car.find()
     //console.log("Our Cars ", cars)
     return  res.json({items: [...cars]})
+})
+
+router.get("/getItem/:id", auth, async (req, res)=>{
+    try{
+        const item = await Car.findById(req.params.id)
+        console.log("Our item ", item)
+        return res.json(item)
+    }catch(e){
+        return res.status(500).json("That item doeesnt exist")
+    }
+    
 })
 
 module.exports = router

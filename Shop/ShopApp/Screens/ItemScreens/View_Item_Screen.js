@@ -2,7 +2,7 @@
 //  Screen To Visualize Item Params - Images, Price, Location Full Description
 //---------------------------------------------------------
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, Image, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { FontAwesome } from '@expo/vector-icons';
@@ -10,10 +10,24 @@ import { Main_Screen_1 } from "../MainScreens/Main_Screen_1";
 
 const SCREEN = Dimensions.get("screen")
 import {COLORS} from "../../Components/Colors/colors"
+import { useFetch } from "../../Hooks/fetchHook";
 
 export const ItemPage = ({route}) => {
     const {item} = route.params
     const rate = 3
+    const fetch = useFetch()
+
+    useEffect(()=>{
+        //getElementFromServer()
+        console.log(">>", route.params)
+    }, [])
+
+
+    async function getElementFromServer(){
+        console.log(">")
+        const item = await fetch.getElement(route.params.item.id)
+        console.log("My item ", item)
+    }   
 
     return(
         <Main_Screen_1>
@@ -125,7 +139,9 @@ export const ItemPage = ({route}) => {
                     </Text>
                 </Pressable>
 
-                <Pressable style={[styles.buy_button, {backgroundColor:COLORS.orange}]}>
+                <Pressable
+                    onPress={getElementFromServer} 
+                    style={[styles.buy_button, {backgroundColor:COLORS.orange}]}>
                     <Text style={{
                         color:"white", 
                         fontSize: 15, 

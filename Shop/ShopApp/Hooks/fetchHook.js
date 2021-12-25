@@ -72,12 +72,38 @@ export const useFetch = () => {
                     headers: {
                          Authorization: `Bearer ${auth.userToken}` 
                         }
-                    }
-
-            )
+                    })
         }catch(e){
 
         }
+    }
+
+    //Gets user wish list items
+    async function getWLItems(){
+        try{
+            const response = await axios.get(SERVER_ADDR+"/item/wlItems",
+            {
+                headers: {
+                    Authorization: `Bearer ${auth.userToken}` 
+                   }
+               }    
+            )
+
+            return response.data
+        }catch(e){
+
+        }
+    }
+
+
+    //I dont know why i put the auth part here. Prob were drunk.
+    async function getElement(id){
+        try{
+            const response = await axios.get(SERVER_ADDR+`/item/getItem/${id}`, {
+                headers: {Authorization: `Bearer ${auth.userToken}`}
+            })
+            return response.data
+        }catch(e){}
     }
 
 
@@ -88,6 +114,8 @@ export const useFetch = () => {
         newCar,
         getAllItems,
         addToWishList,
+        getWLItems,
+        getElement,
     }
 }
 

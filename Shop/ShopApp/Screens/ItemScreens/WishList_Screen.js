@@ -7,11 +7,13 @@ import {
     Pressable, 
     Dimensions,
     Image,
-    StyleSheet
+    StyleSheet,
+    Button
 } from "react-native" 
 import { SimpleLineIcons } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons'; 
 import { OpenContext } from "../../Context/AuxContext";
+import { useFetch } from "../../Hooks/fetchHook";
 
 
 const SCREEN = Dimensions.get("screen")
@@ -23,10 +25,29 @@ export const WishList = ({navigation, route}) => {
     const [open, setOpen] = useState(false)
     const [currentItem, setCU] = useState(null) //Im lazy fuk
     const [items, setItems] = useState(null)
+    const fetch = useFetch()
 
+
+    //*****************************************************
+    // useEffect section
+    //*****************************************************
     useEffect(()=>{
-        setItems(WISH_LIST)
+        getWLItems()
     },[])
+
+
+    //*****************************************************
+    // Custom Function section
+    //*****************************************************
+
+    //Get Elements from 
+    async function getWLItems(){
+        const list = await fetch.getWLItems()
+        //console.log("My List ", list)
+        setItems([...WISH_LIST, ...list])
+        //console.log(items)
+        return list
+    }
 
 
     //Delete option
@@ -50,12 +71,29 @@ export const WishList = ({navigation, route}) => {
         })
     }
 
+    function getItemTitle(item){
+        switch(item.modelClass){
+            case "Car":
+                return item.brand + item.description
+            default:
+                return item.title
+        }
+    }
+
+    function getItemID(item){
+        switch(item.modelClass){
+            case "Car":
+                return item._id
+            default:
+                return item.id
+        }
+    }
+
 
 
     function renderFLItem({item}){
         return(
             <View style={{width: SCREEN.width, alignItems:"center"}}>
-                
                 <View
                     style={{
                         backgroundColor:'white',
@@ -77,7 +115,7 @@ export const WishList = ({navigation, route}) => {
                         }} 
                     source={{uri: `https://picsum.photos/500/500?${item.id}`}}/>
                 <View style={{marginLeft: SCREEN.width*0.05}}>
-                    <Text style={{fontSize: 17, fontWeight: "700"}}>{item.title}</Text>
+                    <Text style={{fontSize: 17, fontWeight: "700"}}>{getItemTitle(item)}</Text>
                     <Text>{item.price} $</Text>
                 </View>
                 <View style={{ position:"absolute", left: SCREEN.width*0.85}}>
@@ -102,15 +140,18 @@ export const WishList = ({navigation, route}) => {
         )
     }
 
-
     return(
         <Main_Screen_1>
             <Text>My WishList</Text>
+            <Button
+                title="test"
+                onPress={getWLItems}
+            />
             <FlatList
                 data={items}
                 onScroll={()=>setOpen(false)}
                 renderItem={renderFLItem}
-                keyExtractor={item=> item.id}
+                keyExtractor={item=> getItemID(item)}
                 ListFooterComponent={()=><View style={{height: SCREEN.height*0.25}}/>}
             />
             {open && 
