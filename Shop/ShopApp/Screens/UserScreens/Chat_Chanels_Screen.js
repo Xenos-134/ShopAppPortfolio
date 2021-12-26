@@ -1,20 +1,37 @@
-import React from "react";
-import { Dimensions, StyleSheet, Text, View, Image, Pressable } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Dimensions, StyleSheet, Text, View, Image, Pressable, Button } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Main_Screen_1 } from "../MainScreens/Main_Screen_1";
 import {COLORS} from "../../Components/Colors/colors"
+import { useFetch } from "../../Hooks/fetchHook";
 
 
 const SCREEN = Dimensions.get("screen")
 
 export const Chat_Chanels = ({navigation}) =>{
+    const [chatRooms, setChatRooms] = useState([])
+    const fetch = useFetch()
+
+    useEffect(()=>{
+        //setChatRooms(chatChanels)
+        getUserChatRooms()
+    }, [])
+
+    async function getUserChatRooms(){
+        const ucr = await fetch.getUserChatRooms()
+        setChatRooms([...ucr, ...chatChanels])
+        console.log(ucr)
+    }
 
 
     const ChatChanelView = ({item}) => {
         return(
-            <Pressable style={styles.chat_chanel_view} onPress={()=>navigation.navigate("Private_Chat")}>
+            <Pressable 
+                style={styles.chat_chanel_view} 
+                onPress={()=>navigation.navigate("Private_Chat")}>
+
                 <Image
-                    source={{uri: `https://picsum.photos/100/101${item.id}`}}
+                    source={{uri: `https://picsum.photos/100/101${item.id[0] || item.id}`}}
                     style={{
                         width: SCREEN.width*0.13, 
                         height: SCREEN.width*0.13,
@@ -52,7 +69,7 @@ export const Chat_Chanels = ({navigation}) =>{
    return(
        <Main_Screen_1>
            <FlatList
-                data={chatChanels}
+                data={chatRooms}
                 renderItem={ChatChanelView}
                 keyExtractor={item=>item.id}
            />
@@ -90,6 +107,4 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.8,
         borderColor: "grey" 
         },
-
-    
 })

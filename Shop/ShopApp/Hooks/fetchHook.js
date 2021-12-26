@@ -106,6 +106,30 @@ export const useFetch = () => {
         }catch(e){}
     }
 
+    async function getUserChatRooms(){
+        try{
+            const response = await axios.get(SERVER_ADDR+`/chat`, {
+                headers: {Authorization: `Bearer ${auth.userToken}`}
+            })
+            return response.data.userCRooms
+        }catch(e){
+        }
+    }
+
+    async function sendSocket(socket){
+        
+        console.log("tests")
+        try{
+            const jsocket = await JSON.stringify(socket)
+            const response = await axios.post(SERVER_ADDR+`/setSocket`,{jsocket}, {
+                headers: {Authorization: `Bearer ${auth.userToken}`}
+            })
+            return response.data.userCRooms
+        }catch(e){
+            console.log("ERROR ",e)
+        }
+    }
+
 
     return {
         ping,
@@ -116,6 +140,8 @@ export const useFetch = () => {
         addToWishList,
         getWLItems,
         getElement,
+        getUserChatRooms,
+        sendSocket
     }
 }
 

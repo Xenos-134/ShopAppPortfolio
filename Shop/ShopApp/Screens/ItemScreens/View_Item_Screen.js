@@ -19,12 +19,10 @@ export const ItemPage = ({route}) => {
 
     useEffect(()=>{
         //getElementFromServer()
-        console.log(">>", route.params)
     }, [])
 
 
     async function getElementFromServer(){
-        console.log(">")
         const item = await fetch.getElement(route.params.item.id)
         console.log("My item ", item)
     }   

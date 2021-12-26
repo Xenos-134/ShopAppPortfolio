@@ -7,7 +7,6 @@ const multer = require("multer")
 
 //Multer Section
 const storage = multer.diskStorage({
-    
     destination(req, file, callback){
         callback(null, "./media")
     },

@@ -56,6 +56,7 @@ import { OpenContext } from './Context/AuxContext';
 
 const SCREEN = Dimensions.get("window")
 import {AuthContext} from "./Context/AuthContext"
+import { useFetch } from './Hooks/fetchHook';
 
 
 
@@ -65,17 +66,29 @@ export default function App() {
   const [userToken, setUserToken] = useState(null)
   const [loggedIn, setLI]= useState(false)
   const [socket, setSocket] = useState(null)
+  const fetch = useFetch()
 
   useEffect(()=>{
-      getSocket()
     getItemFromStorage()
     //AsyncStorage.removeItem("storage")
   },[])
 
+
+  //Establishes socket connection with server and sends socket associated with user
   async function getSocket(){
-    const socket = await io("http://192.168.0.81:5000")
-    //console.log("socket ", socket)
+    console.log("STARTED GETTING SOCKET")
+    const socket = await io("http://192.168.0.81:5000",{
+      query:{userToken}
+    })
+    setSocket(socket)
+    //fetch.sendSocket(socket)
   }
+
+  useEffect(()=>{
+    if(loggedIn){
+      getSocket()
+    }
+  },[loggedIn])
 
   function of(){ //openfunction
     //console.log("ESTAMOS A ABRIR/FECHAR")
@@ -109,6 +122,7 @@ export default function App() {
     if(token.token === null) return
     setUserToken(token.token)
     setLI(true)
+    console.log("FINISHE SETTING THE TOKEN")
   }
 
   async function logOut(){

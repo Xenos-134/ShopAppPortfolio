@@ -12,6 +12,13 @@ const UserSchema = new mongoose.Schema({
     },
     wishList:{
         type: Array
+    },
+    chatRooms:{
+        type: Array,
+        default: []
+    },
+    socket: {
+        type: String
     }
 })
 

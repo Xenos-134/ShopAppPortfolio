@@ -7,6 +7,8 @@ const config = require("config")
 const mongoose =require("mongoose")
 const io = new Server(server)
 const multer = require("multer")
+const auth = require("./Middleware/auth.middleware")
+const jwt = require("jsonwebtoken")
 
 //APP use section
 app.use(express.json({extended: "true"}))
@@ -18,7 +20,6 @@ const PORT = config.get("port")
 
 //Multer Section
 const storage = multer.diskStorage({
-    
     destination(req, file, callback){
         callback(null, "./media")
     },
@@ -26,18 +27,30 @@ const storage = multer.diskStorage({
         callback(null, "img_"+Date.now())
     }
 })
+
 const upload = multer({storage})
 
 
-io.on('connection', (socket) => {  
-    console.log('a user connected');  
-    // socket.on('disconnect', () => {    
-    //     console.log('user disconnected');  
-    // });
+io.on('connection', async (socket) => {  
+    try{
+        if(socket.handshake.query && socket.handshake.query.userToken){
+            const decoded = jwt.verify(socket.handshake.query.userToken, config.get("jwtToken"))
+            console.log("decoded ", decoded)
+        }
+    }catch(e){
+        console.log(e)
+    }
+    socket.on('disconnect', () => {    
+        console.log('user disconnected');  
+    });
 });
 
 app.get("/", (req, res)=>  {
     console.log("TEST")
+})
+
+app.post("/setSocket", auth,  async (req, res)=>{
+    console.log("SOCKET TEST ",req.body)
 })
 
 
@@ -65,6 +78,7 @@ async function start(){
 //Routes Section
 app.use("/auth", require("./Routes/auth.routes"))
 app.use("/item", require("./Routes/item.routes"))
+app.use("/chat", require("./Routes/chat.routes"))
 
 start()
 module.exports = upload
