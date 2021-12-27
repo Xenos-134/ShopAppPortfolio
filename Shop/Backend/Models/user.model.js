@@ -18,7 +18,8 @@ const UserSchema = new mongoose.Schema({
         default: []
     },
     socket: {
-        type: String
+        type: String,
+        default: null
     }
 })
 

@@ -22,7 +22,7 @@ async function getUserCHatRooms(userId, chatIdList){
             senderId: userId,
             chatPartnerName: partner.username,
             messages: messages1,
-            n_unread: 5,
+            n_unread: 10,
         }
         chatRooms.push(nchat)
     }))
@@ -68,5 +68,5 @@ const messages1 = [
     {text: "hi", senderName: "John", senderId: "1234", id: "2"},
     {text: "how is ur day", senderName: "John", senderId: "12", id: "3"},
     {text: "good. And ur?", senderName: "John", senderId: "1234", id: "4"},
-    {text: "Also Good. Im contacting you to because of your last publication. Is it till avaliable", senderName: "John", senderId: "12", id: "5"},
+    {text: "Test", senderName: "John", senderId: "12", id: "5"},
 ]

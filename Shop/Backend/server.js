@@ -10,6 +10,11 @@ const multer = require("multer")
 const auth = require("./Middleware/auth.middleware")
 const jwt = require("jsonwebtoken")
 
+
+//Import model section
+const User = require("./Models/user.model")
+const ChatRoom = require("./Models/chat_room.model")
+
 //APP use section
 app.use(express.json({extended: "true"}))
 app.use(express.static("media"))
@@ -33,9 +38,14 @@ const upload = multer({storage})
 
 io.on('connection', async (socket) => {  
     try{
+        //When user connects to socket, he send his token and we save in 
+        //user.model socket his actual socket 
+        var userID
         if(socket.handshake.query && socket.handshake.query.userToken){
-            const decoded = jwt.verify(socket.handshake.query.userToken, config.get("jwtToken"))
-            console.log("decoded ", decoded)
+            userID = await verifyUserToken(socket.handshake.query.userToken, config.get("jwtToken"))
+            saveUserSocket(userID, socket.id)
+            // const user = await User.findOne({username: "Xenos"})
+            // io.to(user.socket).emit("test", {message: "test"})
         }
     }catch(e){
         console.log(e)
@@ -43,7 +53,53 @@ io.on('connection', async (socket) => {
     socket.on('disconnect', () => {    
         console.log('user disconnected');  
     });
+    socket.on("client", async (message)=>{
+        const x2 = (await User.find())[1]
+        sendMessageToUser(userID, x2.id,  message.message)
+        
+    })
 });
+
+
+async function sendMessageToUser(owner, partner, text){
+    const chatRoomO = await ChatRoom.findOne({owner, partner})
+    const chatRoomP = await ChatRoom.findOne({owner: partner, partner: owner})
+    
+    const message = await createNewMessage(owner, partner, text)
+    chatRoomO.messages.push(message)
+    chatRoomP.messages.push(message)
+    console.log(chatRoomO)
+    chatRoomO.save()
+    chatRoomP.save()
+}
+
+function createNewMessage(from, to, text){
+    const message = {
+        from : from,
+        to: to,
+        text: text,
+        time: Date.now()
+    }
+    return message
+}
+
+
+//Same shit as auth.middleware but returns useID
+async function verifyUserToken(token){
+    const decoded = jwt.verify(token, config.get("jwtToken"))
+    //console.log("Decoded ", decoded)
+    return decoded.userID
+}
+
+
+async function saveUserSocket(userID, socketID){
+    const user = await User.findById(userID)
+    user.socket = socketID
+    await user.save()
+    // console.log("User actual socket ", socketID)
+    // console.log("User ", user)
+    return true
+}
 
 app.get("/", (req, res)=>  {
     console.log("TEST")

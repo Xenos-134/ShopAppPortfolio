@@ -74,15 +74,26 @@ export default function App() {
   },[])
 
 
+  //Defines socket propreties 
+  useEffect(()=>{
+
+    if(!socket) return
+    socket.on("test", ({message})=>{
+      console.log("We recived response from the server", message)
+    })
+
+  },[socket])
+
+
   //Establishes socket connection with server and sends socket associated with user
   async function getSocket(){
-    console.log("STARTED GETTING SOCKET")
     const socket = await io("http://192.168.0.81:5000",{
       query:{userToken}
     })
     setSocket(socket)
     //fetch.sendSocket(socket)
   }
+
 
   useEffect(()=>{
     if(loggedIn){
@@ -122,7 +133,6 @@ export default function App() {
     if(token.token === null) return
     setUserToken(token.token)
     setLI(true)
-    console.log("FINISHE SETTING THE TOKEN")
   }
 
   async function logOut(){
@@ -144,7 +154,7 @@ export default function App() {
   }
 
   return (
-    <AuthContext.Provider value={{userToken, setUserToken, logOut}}>
+    <AuthContext.Provider value={{userToken, socket, setUserToken, logOut}}>
       <OpenContext.Provider value={{of, open, ok, sok}}>
         <NavigationContainer>
           <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>

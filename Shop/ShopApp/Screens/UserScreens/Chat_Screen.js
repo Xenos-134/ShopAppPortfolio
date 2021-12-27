@@ -10,6 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import {COLORS} from "../../Components/Colors/colors"
 import { useContext } from "react/cjs/react.development";
 import { OpenContext } from "../../Context/AuxContext";
+import { AuthContext } from "../../Context/AuthContext";
 
 const SCREEN = Dimensions.get("screen")
 
@@ -19,10 +20,12 @@ export const ChatScreen = () => {
     const auxContext = useContext(OpenContext)
     const [message, setMessage] = useState("")
 
+    const auth = useContext(AuthContext)
+
     useEffect(()=>{
         const keybardDidShowListener = Keyboard.addListener("keyboardDidShow",()=> auxContext.sok(true))
         const keybardDidHideListener = Keyboard.addListener("keyboardDidHide",()=> auxContext.sok(false))
-     
+    
         return(()=>{
             keybardDidHideListener.remove()
             keybardDidShowListener.remove()
@@ -30,8 +33,9 @@ export const ChatScreen = () => {
         })
     },[])
 
-    function sendMessage({text}){
+    function sendMessage(){
         console.log(">>",message)
+        auth.socket.emit("client", {message})
         setMessage("")
     }
 

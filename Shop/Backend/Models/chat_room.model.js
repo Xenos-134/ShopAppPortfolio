@@ -9,7 +9,8 @@ const ChatRoomSchema = new mongoose.Schema({
         type: String
     },
     messages: {
-        type: Array
+        type: Array,
+        default: []
     },
 })
 

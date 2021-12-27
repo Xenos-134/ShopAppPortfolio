@@ -20,7 +20,7 @@ export const Chat_Chanels = ({navigation}) =>{
     async function getUserChatRooms(){
         const ucr = await fetch.getUserChatRooms()
         setChatRooms([...ucr, ...chatChanels])
-        console.log(ucr)
+        //console.log(ucr)
     }
 
 
@@ -40,6 +40,28 @@ export const Chat_Chanels = ({navigation}) =>{
                     }}
                     resizeMethod="auto"
                 />
+
+                <View style={{
+                        position:"absolute",
+                        left: SCREEN.width*0.75, 
+                    }}>
+                        {item.n_unread>0 && 
+                            <View style={{
+                            
+                                
+                                backgroundColor: COLORS.green,
+                                width: SCREEN.width*0.05,
+                                height: SCREEN.width*0.05,
+                                alignItems:"center",
+                                justifyContent:"center",
+                                borderRadius: SCREEN.width*0.025
+                                }}>
+                                <Text style={{color: "white"}}>{item.n_unread}</Text>
+                            </View>
+                        }
+                </View>
+
+
                 <View>
                     <Text style={{fontSize: 16, fontWeight: "700"}}>
                         {item.chatPartnerName} 
@@ -48,20 +70,6 @@ export const Chat_Chanels = ({navigation}) =>{
                         {item.messages[item.messages.length-1].text}
                     </Text>
                 </View>
-                {item.n_unread>0 && 
-                    <View style={{
-                        positon:"abolute", 
-                        left: SCREEN.width*0.4, 
-                        backgroundColor: COLORS.green,
-                        width: SCREEN.width*0.05,
-                        height: SCREEN.width*0.05,
-                        alignItems:"center",
-                        justifyContent:"center",
-                        borderRadius: SCREEN.width*0.025
-                        }}>
-                        <Text style={{color: "white"}}>{item.n_unread}</Text>
-                    </View>
-                }
             </Pressable>
         )
     }
