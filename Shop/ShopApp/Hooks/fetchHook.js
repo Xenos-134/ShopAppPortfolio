@@ -88,7 +88,6 @@ export const useFetch = () => {
                    }
                }    
             )
-
             return response.data
         }catch(e){
 
@@ -106,6 +105,8 @@ export const useFetch = () => {
         }catch(e){}
     }
 
+
+
     async function getUserChatRooms(){
         try{
             const response = await axios.get(SERVER_ADDR+`/chat`, {
@@ -117,7 +118,6 @@ export const useFetch = () => {
     }
 
     async function sendSocket(socket){
-        
         console.log("tests")
         try{
             const jsocket = await JSON.stringify(socket)
@@ -127,6 +127,28 @@ export const useFetch = () => {
             return response.data.userCRooms
         }catch(e){
             console.log("ERROR ",e)
+        }
+    }
+
+    async function chatWithOwner(){
+        try{
+            const response = await axios.get(SERVER_ADDR+`/chat/chatWithOwner`, {
+                headers: {Authorization: `Bearer ${auth.userToken}`}
+            })
+            return response.data
+        }catch(e){
+            console.log("ERROR ",e)
+        }
+    }
+
+    async function getChatRoom(id){
+        console.log(".............")
+        try{
+            const response = await axios.get(SERVER_ADDR+`/chat/getChatRoom/${id}`, {
+                headers: {Authorization: `Bearer ${auth.userToken}`}
+            })
+            return response.data
+        }catch(e){
         }
     }
 
@@ -141,7 +163,9 @@ export const useFetch = () => {
         getWLItems,
         getElement,
         getUserChatRooms,
-        sendSocket
+        sendSocket,
+        chatWithOwner,
+        getChatRoom,
     }
 }
 

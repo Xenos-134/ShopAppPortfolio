@@ -30,14 +30,17 @@ async function getUserCHatRooms(userId, chatIdList){
     return chatRooms
 }
 
-router.get("/1", auth, async (req, res)=>{
+
+//Looks for chat room with that participants. If does not exist 
+//creates new ONE
+router.get("/chatWithOwner", auth, async (req, res)=>{
     const user = await User.findById(req.user.userID)
     const users = await User.find()
     
     const chat = await Chat.findOne({owner: user._id, participant: users[1]._id})
     if(chat){ //CHat room exists
-        console.log("Chat", chat)
-        return res.json("TEST FO")
+        console.log("That chat exist", chat)
+        return res.json(chat.id)
     }
 
     //Chat room doesnt exist and we will create new one
@@ -53,11 +56,20 @@ router.get("/1", auth, async (req, res)=>{
 
     user.chatRooms.push(nchat1._id)
     users[1].chatRooms.push(nchat2._id)
-    user.save()
-    users[1].save()
+    // user.save()
+    // users[1].save()
 
-    await nchat1.save()
-    await nchat2.save()
+    // await nchat1.save()
+    // await nchat2.save()
+})
+
+
+router.get("/getChatRoom/:chatID", auth, async (req,res)=>{
+    const {chatID} = req.params
+    const chat = await Chat.findById(chatID)
+    if(!chat) return res.status(500).json("Some error")
+    console.log("Chat Room ", chat)
+    return res.json(chat)
 })
 
 

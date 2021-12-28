@@ -12,7 +12,7 @@ const SCREEN = Dimensions.get("screen")
 import {COLORS} from "../../Components/Colors/colors"
 import { useFetch } from "../../Hooks/fetchHook";
 
-export const ItemPage = ({route}) => {
+export const ItemPage = ({navigation, route}) => {
     const {item} = route.params
     const rate = 3
     const fetch = useFetch()
@@ -22,9 +22,13 @@ export const ItemPage = ({route}) => {
     }, [])
 
 
-    async function getElementFromServer(){
-        const item = await fetch.getElement(route.params.item.id)
-        console.log("My item ", item)
+    async function sendMessageToOwner(){
+        const chatRoom = await fetch.chatWithOwner()
+        navigation.navigate('Chat', {screen: "Messages", 
+            params: {screen: "Private_Chat", 
+                params: {chatRoom}
+            }
+        });
     }   
 
     return(
@@ -138,7 +142,7 @@ export const ItemPage = ({route}) => {
                 </Pressable>
 
                 <Pressable
-                    onPress={getElementFromServer} 
+                    onPress={sendMessageToOwner} 
                     style={[styles.buy_button, {backgroundColor:COLORS.orange}]}>
                     <Text style={{
                         color:"white", 

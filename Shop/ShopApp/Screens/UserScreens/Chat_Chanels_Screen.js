@@ -8,7 +8,7 @@ import { useFetch } from "../../Hooks/fetchHook";
 
 const SCREEN = Dimensions.get("screen")
 
-export const Chat_Chanels = ({navigation}) =>{
+export const Chat_Chanels = ({navigation, route}) =>{
     const [chatRooms, setChatRooms] = useState([])
     const fetch = useFetch()
 

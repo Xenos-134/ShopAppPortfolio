@@ -11,14 +11,18 @@ import {COLORS} from "../../Components/Colors/colors"
 import { useContext } from "react/cjs/react.development";
 import { OpenContext } from "../../Context/AuxContext";
 import { AuthContext } from "../../Context/AuthContext";
+import { useFetch } from "../../Hooks/fetchHook";
 
 const SCREEN = Dimensions.get("screen")
 
 
-export const ChatScreen = () => {
+export const ChatScreen = ({route}) => {
     const myId = "12"
     const auxContext = useContext(OpenContext)
     const [message, setMessage] = useState("")
+    const [messages, setMessages] = useState([])
+    const [ml, setML] = useState(0)
+    const fetch = useFetch()
 
     const auth = useContext(AuthContext)
 
@@ -26,6 +30,8 @@ export const ChatScreen = () => {
         const keybardDidShowListener = Keyboard.addListener("keyboardDidShow",()=> auxContext.sok(true))
         const keybardDidHideListener = Keyboard.addListener("keyboardDidHide",()=> auxContext.sok(false))
     
+        console.log(route.params)
+        getChatRoom()
         return(()=>{
             keybardDidHideListener.remove()
             keybardDidShowListener.remove()
@@ -33,10 +39,36 @@ export const ChatScreen = () => {
         })
     },[])
 
+    useEffect(()=>{
+        messages.length && setML(messages.length-1)
+    },[messages])
+
+
+    //Gets chat room
+    async function getChatRoom(){
+        const chatRoom = await fetch.getChatRoom(route.params.chatRoom)
+        setMessages([...chatRoom.messages])
+    }
+
     function sendMessage(){
-        console.log(">>",message)
         auth.socket.emit("client", {message})
+        const newMessage = createNewMessage(message)
+        var messagesCopy = messages
+        messagesCopy.push(newMessage)
+        setMessages([...messagesCopy])
         setMessage("")
+    }
+
+
+    function createNewMessage(text){
+        console.log("HERER")
+        const newMessage = {
+            text: text,
+            senderName: "John",
+            senderId: "12",
+            id: Date.now()
+        }
+        return newMessage
     }
 
 
@@ -91,7 +123,7 @@ export const ChatScreen = () => {
                 data={messages}
                 renderItem={renderMessage}
                 keyExtractor={item=>item.id}
-                initialScrollIndex={messages.length - 1}
+                //initialScrollIndex={ml}
                 ListFooterComponent={()=><View style={{height: SCREEN.height*0.2}}/>}
             />
             <TextInput

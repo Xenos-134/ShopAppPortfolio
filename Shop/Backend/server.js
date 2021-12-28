@@ -53,33 +53,36 @@ io.on('connection', async (socket) => {
     socket.on('disconnect', () => {    
         console.log('user disconnected');  
     });
-    socket.on("client", async (message)=>{
+    socket.on("client", async (message)=>{ // Need to pass here true sender Username
         const x2 = (await User.find())[1]
-        sendMessageToUser(userID, x2.id,  message.message)
+        sendMessageToUser(userID, x2.id,  message.message, x2.username)
         
     })
 });
 
 
-async function sendMessageToUser(owner, partner, text){
+async function sendMessageToUser(owner, partner, text, senderUsername){
     const chatRoomO = await ChatRoom.findOne({owner, partner})
     const chatRoomP = await ChatRoom.findOne({owner: partner, partner: owner})
     
-    const message = await createNewMessage(owner, partner, text)
+    const message = await createNewMessage(owner, partner, text, senderUsername)
     chatRoomO.messages.push(message)
     chatRoomP.messages.push(message)
-    console.log(chatRoomO)
-    chatRoomO.save()
-    chatRoomP.save()
+    // chatRoomO.save()
+    // chatRoomP.save()
 }
 
-function createNewMessage(from, to, text){
+function createNewMessage(from, to, text, senderUsername){
     const message = {
-        from : from,
+        id: Date.now(), //Just for now
+        senderId : from,
         to: to,
         text: text,
-        time: Date.now()
+        time: Date.now(),
+        senderName: senderUsername
+
     }
+    console.log("MESSAGE ", message)
     return message
 }
 
