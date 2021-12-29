@@ -18,12 +18,13 @@ export const ItemPage = ({navigation, route}) => {
     const fetch = useFetch()
 
     useEffect(()=>{
+        console.log(route.params)
         //getElementFromServer()
     }, [])
 
 
     async function sendMessageToOwner(){
-        const chatRoom = await fetch.chatWithOwner()
+        const chatRoom = await fetch.chatWithOwner(route.params.item.ownerID)
         navigation.navigate('Chat', {screen: "Messages", 
             params: {screen: "Private_Chat", 
                 params: {chatRoom}

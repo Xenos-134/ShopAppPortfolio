@@ -40,7 +40,7 @@ router.post("/newCar", auth, upload.any(), async (req, res)=>{
         new_car.ownerId = req.user.userID
 
         console.log("We are trying to create new Car ", new_car)
-        //await new_car.save()
+        await new_car.save()
         return res.status(200).json("Success")
     }catch(e){
         console.log(e)

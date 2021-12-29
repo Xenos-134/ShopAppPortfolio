@@ -130,9 +130,10 @@ export const useFetch = () => {
         }
     }
 
-    async function chatWithOwner(){
+    async function chatWithOwner(ownerID){
+        console.log(ownerID)
         try{
-            const response = await axios.get(SERVER_ADDR+`/chat/chatWithOwner`, {
+            const response = await axios.get(SERVER_ADDR+`/chat/chatWithOwner/${ownerID}`, {
                 headers: {Authorization: `Bearer ${auth.userToken}`}
             })
             return response.data

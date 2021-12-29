@@ -14,6 +14,7 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons'; 
 import { OpenContext } from "../../Context/AuxContext";
 import { useFetch } from "../../Hooks/fetchHook";
+import { AuthContext } from "../../Context/AuthContext";
 
 
 const SCREEN = Dimensions.get("screen")
@@ -26,6 +27,7 @@ export const WishList = ({navigation, route}) => {
     const [currentItem, setCU] = useState(null) //Im lazy fuk
     const [items, setItems] = useState(null)
     const fetch = useFetch()
+    const aux = useContext(AuthContext)
 
 
     //*****************************************************
@@ -44,7 +46,7 @@ export const WishList = ({navigation, route}) => {
     async function getWLItems(){
         const list = await fetch.getWLItems()
         //console.log("My List ", list)
-        setItems([...WISH_LIST, ...list])
+        setItems([...list])
         //console.log(items)
         return list
     }
@@ -145,7 +147,7 @@ export const WishList = ({navigation, route}) => {
             <Text>My WishList</Text>
             <Button
                 title="test"
-                onPress={getWLItems}
+                onPress={()=>aux.schedulePushNotification()}
             />
             <FlatList
                 data={items}

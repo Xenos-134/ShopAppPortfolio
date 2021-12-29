@@ -20,7 +20,6 @@ export const Chat_Chanels = ({navigation, route}) =>{
     async function getUserChatRooms(){
         const ucr = await fetch.getUserChatRooms()
         setChatRooms([...ucr, ...chatChanels])
-        //console.log(ucr)
     }
 
 
@@ -28,7 +27,10 @@ export const Chat_Chanels = ({navigation, route}) =>{
         return(
             <Pressable 
                 style={styles.chat_chanel_view} 
-                onPress={()=>navigation.navigate("Private_Chat")}>
+                onPress={()=>{
+                    console.log("ITEM", item)
+                    navigation.navigate("Private_Chat", {chatRoom: item.id})
+                }}>
 
                 <Image
                     source={{uri: `https://picsum.photos/100/101${item.id[0] || item.id}`}}

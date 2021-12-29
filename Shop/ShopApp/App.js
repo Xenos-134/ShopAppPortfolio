@@ -2,7 +2,7 @@
 //  React Native Components
 //---------------------------------------------------------
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import Constants from 'expo-constants';
 import { StyleSheet, 
   Text, 
@@ -14,6 +14,8 @@ import { StyleSheet,
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons';
 import io from "socket.io-client"
+
+import * as ENotifications from 'expo-notifications';
 
 //---------------------------------------------------------
 //  My Custom Components
@@ -59,6 +61,15 @@ import {AuthContext} from "./Context/AuthContext"
 import { useFetch } from './Hooks/fetchHook';
 
 
+ENotifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
+
 
 export default function App() {
   const [open, setOpen] = useState(false)
@@ -67,6 +78,34 @@ export default function App() {
   const [loggedIn, setLI]= useState(false)
   const [socket, setSocket] = useState(null)
   const fetch = useFetch()
+
+  //******************************************************************/
+  //expo notification Section
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+    notificationListener.current = ENotifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = ENotifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      ENotifications.removeNotificationSubscription(notificationListener.current);
+      ENotifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+
+
+  //******************************************************************/
 
   useEffect(()=>{
     getItemFromStorage()
@@ -81,7 +120,6 @@ export default function App() {
     socket.on("test", ({message})=>{
       console.log("We recived response from the server", message)
     })
-
   },[socket])
 
 
@@ -154,7 +192,7 @@ export default function App() {
   }
 
   return (
-    <AuthContext.Provider value={{userToken, socket, setUserToken, logOut}}>
+    <AuthContext.Provider value={{userToken, socket, setUserToken, logOut, schedulePushNotification}}>
       <OpenContext.Provider value={{of, open, ok, sok}}>
         <NavigationContainer>
           <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
@@ -347,10 +385,46 @@ const config = {
 };
 
 
+//Depois passar esta parte para dentro de um ficheiro a parter  
 
-{/* <Text style={{ color: isFocused ? '#009933' : '#222' }}>
-{label}
+async function schedulePushNotification() {
+  await ENotifications.scheduleNotificationAsync({
+    content: {
+      title: "You've got mail! 📬",
+      body: 'Here is the notification body',
+      data: { data: 'goes here' },
+    },
+    trigger: { seconds: 2 },
+  });
+}
 
-<Feather name="home" size={24} color={isFocused?"#009933":"#222"} />
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Constants.isDevice) {
+    const { status: existingStatus } = await ENotifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await ENotifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await ENotifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
 
-</Text> */}
+  if (Platform.OS === 'android') {
+    ENotifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: ENotifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  return token;
+}

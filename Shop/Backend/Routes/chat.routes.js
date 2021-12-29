@@ -33,7 +33,8 @@ async function getUserCHatRooms(userId, chatIdList){
 
 //Looks for chat room with that participants. If does not exist 
 //creates new ONE
-router.get("/chatWithOwner", auth, async (req, res)=>{
+router.get("/chatWithOwner/:id", auth, async (req, res)=>{
+    console.log("OWNER ID ", req.params)
     const user = await User.findById(req.user.userID)
     const users = await User.find()
     
@@ -56,11 +57,12 @@ router.get("/chatWithOwner", auth, async (req, res)=>{
 
     user.chatRooms.push(nchat1._id)
     users[1].chatRooms.push(nchat2._id)
-    // user.save()
-    // users[1].save()
+    user.save()
+    users[1].save()
 
-    // await nchat1.save()
-    // await nchat2.save()
+    await nchat1.save()
+    await nchat2.save()
+    return res.json(nchat1.id)
 })
 
 

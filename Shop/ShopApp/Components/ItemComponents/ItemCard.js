@@ -1,14 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Image, Text, StyleSheet, Dimensions, Pressable } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 const SCREEN = Dimensions.get("window")
 
 
-export const ItemCard = ({itemData, navigate, isLiked, addToWL}) => {
+const SERVER_ADDR = "http://192.168.0.81:5000"
+
+
+export const ItemCard = ({itemData, navigate, isLiked, addToWL, image}) => {
+    const [imageUri, setImage] = useState(null)
+    useEffect(()=>{
+        if(!image) return setImage(`https://picsum.photos/500/500?${itemData.title}`)
+        setImage(SERVER_ADDR+`/${image}`)
+    },[])
+
     return(
         <Pressable style={styles.product} onPress={()=>navigate(itemData)}>
             <Image 
-                source={{uri: `https://picsum.photos/500/500?${itemData.title}`}}
+                source={{uri: imageUri}}
                 style={styles.product_image}
                 resizeMethod="auto"
             />

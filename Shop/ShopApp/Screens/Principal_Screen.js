@@ -25,28 +25,39 @@ const ItemListRow = ({item, navigate, getItemTitle, addToWL}) => {
                     itemData={{
                             title: getItemTitle(item.fe), 
                             price: item.fe.price, 
-                            id: item.fe._id
+                            id: item.fe._id,
+                            ownerID: item.fe.ownerId
                         }}
                     isLiked={item.fe.liked || false}
-                    addToWL={addToWL} 
+                    addToWL={addToWL}
+                    image={item.fe.image}
                     navigate={navigate}/>
                 <ItemCard 
                     itemData={{
                         title: getItemTitle(item.se), 
                         price: item.se.price, 
-                        id: item.se._id
+                        id: item.se._id,
+                        ownerID: item.se.ownerId
                     }}
                     isLiked={item.se.liked || false}
                     addToWL={addToWL} 
+                    image={item.se.image}
                     navigate={navigate}/>
             </View>
         )
     }
     return(
-        <View style={{flexDirection: "row"}}>
+        <View style={{flexDirection: "row", marginLeft: SCREEN.width*0.03}}>
                 <ItemCard 
-                    itemData={{title: getItemTitle(item.se), price: item.se.price}} 
-                    isLiked={false}
+                    itemData={{
+                        title: getItemTitle(item.fe), 
+                        price: item.fe.price, 
+                        id: item.fe._id,
+                        ownerID: item.fe.ownerId
+                    }}
+                    isLiked={item.fe.liked || false}
+                    addToWL={addToWL}
+                    image={item.fe.image} 
                     navigate={navigate}/>
         </View>
     )
@@ -101,7 +112,7 @@ export const PrincipalScreen = ({navigation}) => {
     async function loadItems(){
         try{
             const items = await getItemsFromServer()
-            setItemList([...items, ...ItemList])
+            setItemList([...items])
         }catch(e){
             console.log("Impossible to load items ", e)
         }
@@ -137,11 +148,16 @@ export const PrincipalScreen = ({navigation}) => {
 
     //Function That aranges my list of items into pairs cuz of 2 items per row
     async function arrangePairsHandler(itemList){
-        //console.log("Our pairs ", itemList)
+
         var pairs_list = [];
         var i = 0;
             while(i < itemList.length){
-                const pair = {fe: itemList[i], se: itemList[i+1], key: i, complete: itemList[i+1]?true:false }
+                const pair = {
+                    fe: itemList[i], 
+                    se: itemList[i+1], 
+                    key: i, 
+                    complete: itemList[i+1]?true:false,
+                }
                 pairs_list.push(pair)
                 i=i+2;
             }
