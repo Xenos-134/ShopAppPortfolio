@@ -25,7 +25,8 @@ export const useFetch = () => {
     async function logIn(username, password){
         const response = await axios.post(SERVER_ADDR+"/auth/logIn", {username, password})
         if(response.status !== 200) throw new fetchException("Some Error On Server Side")
-        return response.data.userToken
+
+        return response.data
     }
 
     //Send request to create new Car item
@@ -118,7 +119,6 @@ export const useFetch = () => {
     }
 
     async function sendSocket(socket){
-        console.log("tests")
         try{
             const jsocket = await JSON.stringify(socket)
             const response = await axios.post(SERVER_ADDR+`/setSocket`,{jsocket}, {
@@ -131,7 +131,6 @@ export const useFetch = () => {
     }
 
     async function chatWithOwner(ownerID){
-        console.log(ownerID)
         try{
             const response = await axios.get(SERVER_ADDR+`/chat/chatWithOwner/${ownerID}`, {
                 headers: {Authorization: `Bearer ${auth.userToken}`}
@@ -143,7 +142,6 @@ export const useFetch = () => {
     }
 
     async function getChatRoom(id){
-        console.log(".............")
         try{
             const response = await axios.get(SERVER_ADDR+`/chat/getChatRoom/${id}`, {
                 headers: {Authorization: `Bearer ${auth.userToken}`}

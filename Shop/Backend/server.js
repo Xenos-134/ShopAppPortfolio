@@ -68,8 +68,8 @@ async function sendMessageToUser(owner, partner, text, senderUsername){
     const message = await createNewMessage(owner, partner, text, senderUsername)
     chatRoomO.messages.push(message)
     chatRoomP.messages.push(message)
-    // chatRoomO.save()
-    // chatRoomP.save()
+        chatRoomO.save()
+        chatRoomP.save()
 }
 
 function createNewMessage(from, to, text, senderUsername){

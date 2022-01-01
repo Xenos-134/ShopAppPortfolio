@@ -7,12 +7,8 @@ import {AuthContext} from "../Context/AuthContext"
 
 export const Settings_Screen = () => {
     const fetch = useFetch()
-
     const auth = useContext(AuthContext)
 
-    useEffect(()=>{
-        console.log(auth)
-    },[])
 
     async function sendToken(){
         axios.get("http://192.168.0.81:5000/auth",

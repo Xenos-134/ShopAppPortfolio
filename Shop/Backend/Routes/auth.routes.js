@@ -53,7 +53,7 @@ router.post("/logIn", async (req, res)=>{
         bcrypt.compare(password, exist.password, async function(err, result){
             if(!result) return res.status(500).json("Error")
             const userToken = await jwt.sign({userID: exist._id}, "SuperScretToken", {expiresIn: "1h"})
-            return res.status(200).json({userToken})
+            return res.status(200).json({userToken, userId: exist.id})
         })
     }catch(e){
         return res.status(500).json("Some error in server side")

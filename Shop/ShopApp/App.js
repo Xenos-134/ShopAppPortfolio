@@ -75,6 +75,7 @@ export default function App() {
   const [open, setOpen] = useState(false)
   const [ok, setOk] = useState(false) //opened Keyboard
   const [userToken, setUserToken] = useState(null)
+  const [userID, setUserID] = useState(null)
   const [loggedIn, setLI]= useState(false)
   const [socket, setSocket] = useState(null)
   const fetch = useFetch()
@@ -86,10 +87,11 @@ export default function App() {
   const notificationListener = useRef();
   const responseListener = useRef();
 
+
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
-    notificationListener.current = ENotifications.addNotificationReceivedListener(notification => {
+      responseListener.current = ENotifications.addNotificationReceivedListener(notification => {
       setNotification(notification);
     });
 
@@ -106,7 +108,6 @@ export default function App() {
 
 
   //******************************************************************/
-
   useEffect(()=>{
     getItemFromStorage()
     //AsyncStorage.removeItem("storage")
@@ -150,13 +151,11 @@ export default function App() {
 
   useEffect(()=>{
     saveTokenToStorage(userToken)
-    //console.log(userToken)
   },[userToken])
 
-  //This shit is watching for changes in state of the userToken 
-  // useEffect(()=>{ 
-  //   console.log("TEST", loggedIn)
-  // },[loggedIn])
+  useEffect(()=>{
+    saveUserID(userID)
+  },[userID])
 
 
   async function saveTokenToStorage(token){
@@ -166,9 +165,19 @@ export default function App() {
     setLI(true)
   }
 
+
+  //Merge both functions 
+  async function saveUserID(userID){
+    if(!userID) return 
+    AsyncStorage.setItem("UserID", await JSON.stringify({userID}))
+    setUserID(userID)
+  }
+
   async function getItemFromStorage(){
     const token = await JSON.parse(await AsyncStorage.getItem("Storage"))
+    const id = await JSON.parse(await AsyncStorage.getItem("UserID"))
     if(token.token === null) return
+    setUserID(id.userID)    //Gets user id saves alongside with user token
     setUserToken(token.token)
     setLI(true)
   }
@@ -181,7 +190,7 @@ export default function App() {
 
   if(!loggedIn){
     return(
-      <AuthContext.Provider value={{userToken, setUserToken}}>
+      <AuthContext.Provider value={{userToken, setUserToken, userID, setUserID}}>
         <NavigationContainer>
           <Stack.Navigator  screenOptions={{headerShown:false}}>
             <Stack.Screen name="Login" component={Login}/>
@@ -192,7 +201,7 @@ export default function App() {
   }
 
   return (
-    <AuthContext.Provider value={{userToken, socket, setUserToken, logOut, schedulePushNotification}}>
+    <AuthContext.Provider value={{userID ,userToken, socket, setUserToken, logOut, schedulePushNotification}}>
       <OpenContext.Provider value={{of, open, ok, sok}}>
         <NavigationContainer>
           <Tab.Navigator screenOptions={{ headerShown: false}} tabBar={(props) => <MyTabBar of={of} ok={ok} {...props} />}>
@@ -414,7 +423,7 @@ async function registerForPushNotificationsAsync() {
     token = (await ENotifications.getExpoPushTokenAsync()).data;
     console.log(token);
   } else {
-    alert('Must use physical device for Push Notifications');
+    //alert('Must use physical device for Push Notifications');
   }
 
   if (Platform.OS === 'android') {

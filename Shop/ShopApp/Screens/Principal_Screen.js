@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, Dimensions, StyleSheet, Image, Button, Modal } from "react-native";
-import { AntDesign } from '@expo/vector-icons'; 
+import { View, Text, Dimensions, StyleSheet, Image, Button, Modal, ViewPropTypes, Pressable } from "react-native";
+import { FontAwesome } from '@expo/vector-icons'; 
 
 //---------------------------------------------------------
 //  My Custom Components
@@ -8,10 +8,11 @@ import { AntDesign } from '@expo/vector-icons';
 import { Main_Screen_1 } from "./MainScreens/Main_Screen_1";
 import { ItemCard } from "../Components/ItemComponents/ItemCard";
 import { NewItemModal } from "./ItemScreens/New_Item_Modal";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { useFetch } from "../Hooks/fetchHook";
 
 import { OpenContext } from "../Context/AuxContext"; //My Context
+
 
 
 const SCREEN = Dimensions.get("window")
@@ -97,6 +98,13 @@ export const PrincipalScreen = ({navigation}) => {
     // Custom Function section
     //*****************************************************
 
+    //FIlters based on the modelClass {Car, Phone, Computer ...}
+    async function filterHandler(model){
+        const filteredList = await itemList.filter(item => item.modelClass === model)
+        console.log("Filtered List \n", filteredList )
+    }
+
+
     //Function that adds/removes item to/from WishList
     async function addToWL(item){
         var itemListCopy = itemList
@@ -167,7 +175,9 @@ export const PrincipalScreen = ({navigation}) => {
 
     return(
         <Main_Screen_1>
+
             <FlatList
+                ListHeaderComponent={listHeader}
                 data={pairs}
                 keyExtractor={item => item.key}
                 renderItem={({item})=>ItemListRow({item, navigate, getItemTitle, addToWL})}
@@ -236,3 +246,38 @@ const ItemList = [
     {title:"10th Item", price:17},
     
 ]
+
+const filterSelector = [
+    "Books",
+    "Bikes",
+    "Cars",
+    "Computers",
+    "CellPhones"
+]
+
+const listHeader = () => {
+    return(
+        <View
+            style={{alignItems:"center"}}
+        >
+            <View style={{
+                backgroundColor: "grey",
+                height: SCREEN.height*0.06,
+                width: SCREEN.width*0.95,
+                alignItems:"center",
+                justifyContent:"center",
+                borderRadius: SCREEN.height*0.03,
+                marginBottom: 10
+            }}>
+                <View style={{flexDirection:"row"}}>
+                    <FontAwesome name="search" size={22} color="black" />
+                    <View style={{marginLeft: 5}}> 
+                        <Text>
+                            Search
+                        </Text>
+                    </View>
+                </View>
+            </View>
+        </View>
+    )
+}

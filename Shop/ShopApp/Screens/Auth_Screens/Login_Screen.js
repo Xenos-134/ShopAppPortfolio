@@ -105,8 +105,10 @@ export const Login = () => {
     async function logIn(){
         console.log(input.username, input.password)
         try{
-            const token = await fetch.logIn(input.username, input.password)
-            auth.setUserToken(token)
+            const {userToken, userId} = await fetch.logIn(input.username, input.password)
+
+            auth.setUserToken(userToken)
+            auth.setUserID(userId)
         }catch(e){
             console.log("Error: ", e)
         }

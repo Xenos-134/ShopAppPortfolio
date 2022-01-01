@@ -2,13 +2,13 @@
 //  Screen That Displays All Messages Of The User - For now just testing image upload
 //---------------------------------------------------------
 
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import { Main_Screen_1 } from "../MainScreens/Main_Screen_1";
 import {View, Text, Button , Image, FlatList, Dimensions, TextInput, Keyboard, Pressable} from "react-native"
 import * as ImagePicker from 'expo-image-picker';
+import { FontAwesome } from '@expo/vector-icons'; 
 
 import {COLORS} from "../../Components/Colors/colors"
-import { useContext } from "react/cjs/react.development";
 import { OpenContext } from "../../Context/AuxContext";
 import { AuthContext } from "../../Context/AuthContext";
 import { useFetch } from "../../Hooks/fetchHook";
@@ -17,7 +17,6 @@ const SCREEN = Dimensions.get("screen")
 
 
 export const ChatScreen = ({route}) => {
-    const myId = "12"
     const auxContext = useContext(OpenContext)
     const [message, setMessage] = useState("")
     const [messages, setMessages] = useState([])
@@ -30,7 +29,7 @@ export const ChatScreen = ({route}) => {
         const keybardDidShowListener = Keyboard.addListener("keyboardDidShow",()=> auxContext.sok(true))
         const keybardDidHideListener = Keyboard.addListener("keyboardDidHide",()=> auxContext.sok(false))
     
-        console.log(route.params)
+        //console.log(route.params)
         getChatRoom()
         return(()=>{
             keybardDidHideListener.remove()
@@ -47,10 +46,15 @@ export const ChatScreen = ({route}) => {
     //Gets chat room
     async function getChatRoom(){
         const chatRoom = await fetch.getChatRoom(route.params.chatRoom)
+        //console.log("Chat Room ", chatRoom)
         setMessages([...chatRoom.messages])
     }
 
     function sendMessage(){
+        if(message.length === 0){
+            console.log("Need to write something before sending")
+            return
+        }
         auth.socket.emit("client", {message})
         const newMessage = createNewMessage(message)
         var messagesCopy = messages
@@ -61,7 +65,6 @@ export const ChatScreen = ({route}) => {
 
 
     function createNewMessage(text){
-        console.log("HERER")
         const newMessage = {
             text: text,
             senderName: "John",
@@ -73,7 +76,7 @@ export const ChatScreen = ({route}) => {
 
 
     function renderMessage({item}){
-       if(item.senderId===myId){
+       if(item.senderId===auth.userID){
         return(
             <View style={{
                 backgroundColor: "white",
@@ -156,7 +159,7 @@ export const ChatScreen = ({route}) => {
                     justifyContent:"center",
                     elevation:5
                     }}>
-                <Text>+</Text>
+                <FontAwesome name="send" size={22} color="white"/>
             </Pressable>
         </Main_Screen_1>
     )
