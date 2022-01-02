@@ -8,7 +8,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Main_Screen_1 } from "./MainScreens/Main_Screen_1";
 import { ItemCard } from "../Components/ItemComponents/ItemCard";
 import { NewItemModal } from "./ItemScreens/New_Item_Modal";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { FlatList, ScrollView, TextInput } from "react-native-gesture-handler";
 import { useFetch } from "../Hooks/fetchHook";
 
 import { OpenContext } from "../Context/AuxContext"; //My Context
@@ -70,6 +70,7 @@ export const PrincipalScreen = ({navigation}) => {
     const [pairs, setPairs] = useState() //list for pairs for pairs of the elements 
     const [isLoaded, setLoaded] = useState(false)
     const [itemList, setItemList] = useState()
+    const [originalList, setOriginalList] = useState(null) 
     const oc = useContext(OpenContext)
     const fetch = useFetch()
 
@@ -78,7 +79,6 @@ export const PrincipalScreen = ({navigation}) => {
     // useEffect section
     //*****************************************************
     useEffect(()=>{
-        //setItemList(ItemList)
         loadItems()
     },[])
 
@@ -121,6 +121,7 @@ export const PrincipalScreen = ({navigation}) => {
         try{
             const items = await getItemsFromServer()
             setItemList([...items])
+            setOriginalList(items)
         }catch(e){
             console.log("Impossible to load items ", e)
         }
@@ -173,11 +174,23 @@ export const PrincipalScreen = ({navigation}) => {
     }   
 
 
+    async function filterItems(substring){
+        if(!substring.length){
+            console.log("we are here")
+            setItemList([...originalList])
+            return
+        }
+        const items_copy = await originalList.filter(elm => 
+            getItemTitle(elm).toLowerCase().includes(substring.toLowerCase()))
+        console.log(">>>>>",items_copy)
+        setItemList([...items_copy])
+        return
+    }
+
     return(
         <Main_Screen_1>
-
+            <ListHeader filterItems={filterItems}/>
             <FlatList
-                ListHeaderComponent={listHeader}
                 data={pairs}
                 keyExtractor={item => item.key}
                 renderItem={({item})=>ItemListRow({item, navigate, getItemTitle, addToWL})}
@@ -230,6 +243,15 @@ const styles = StyleSheet.create({
         right: 10, 
         position: "absolute"
     },
+    searchBox:{
+        backgroundColor: "grey",
+        height: SCREEN.height*0.06,
+        width: SCREEN.width*0.95,   
+        
+        justifyContent: "center",
+        borderRadius: SCREEN.height*0.03,
+        marginBottom: 10
+    },
 })
 
 
@@ -255,26 +277,32 @@ const filterSelector = [
     "CellPhones"
 ]
 
-const listHeader = () => {
+const ListHeader = ({filterItems}) => {
+    const [typed, setTyped] = useState(false)
+    const [text, setText] = useState("")
+    
+    function ajustPosition(flag){
+        var response;
+        if(!text.length) setTyped(flag)
+    }
+
     return(
         <View
-            style={{alignItems:"center"}}
+            style={{alignItems:"center", backgroundColor:"red", width:SCREEN.width}}
         >
-            <View style={{
-                backgroundColor: "grey",
-                height: SCREEN.height*0.06,
-                width: SCREEN.width*0.95,
-                alignItems:"center",
-                justifyContent:"center",
-                borderRadius: SCREEN.height*0.03,
-                marginBottom: 10
-            }}>
+            <View style={{...styles.searchBox, alignItems:!typed?"center":"flex-start"}}>
                 <View style={{flexDirection:"row"}}>
-                    <FontAwesome name="search" size={22} color="black" />
+                    <View style={{marginLeft: 10}}>
+                        <FontAwesome name="search" size={22} color="black" />
+                    </View>
                     <View style={{marginLeft: 5}}> 
-                        <Text>
-                            Search
-                        </Text>
+                        <TextInput
+                            value={text}
+                            onPressIn={()=>ajustPosition(true)}
+                            onBlur={()=>ajustPosition(false)}
+                            placeholder="Find Item"
+                            onChangeText={(text)=>{setText(text); filterItems(text)}}
+                        />
                     </View>
                 </View>
             </View>
