@@ -1,5 +1,4 @@
 {
     "port": 8000,
-    "mongoDB": "mongodb+srv://Xenos-134:nadademal@cluster0.aglo8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
     "jwtToken": "SuperScretToken" 
 }
